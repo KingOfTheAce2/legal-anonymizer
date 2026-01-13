@@ -3,8 +3,10 @@ name = "anonymizer-engine"
 version = "0.1.0"
 description = "Local anonymization engine for Legal Anonymizer"
 requires-python = ">=3.10"
+
 dependencies = [
-  "python-dateutil>=2.9.0"
+  "python-dateutil>=2.9.0",
+  "langdetect>=1.0.9"
 ]
 
 [project.optional-dependencies]
