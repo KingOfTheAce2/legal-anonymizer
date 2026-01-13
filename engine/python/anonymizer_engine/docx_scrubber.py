@@ -1,10 +1,18 @@
-from typing import Dict, List, Tuple
 from hashlib import sha256
+from typing import Dict, List, Tuple
 from docx import Document
 
-from .layer1 import analyze_layer1_text
 from .preset import Preset
+from .layer1 import analyze_layer1_text
 from .findings import Finding
+
+
+def hash_file(path: str) -> str:
+    h = sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(8192), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def scrub_docx(
@@ -14,65 +22,32 @@ def scrub_docx(
     language: str,
     file_id: str,
 ) -> Tuple[List[Finding], Dict[str, int]]:
-    """
-    Scrub a DOCX file in place and write a redacted copy.
-    Returns findings and summary.
-    """
 
     doc = Document(input_path)
     all_findings: List[Finding] = []
     summary: Dict[str, int] = {}
+    filename = input_path.split("/")[-1]
 
-    # Helper to process text blocks
-    def process_text(text: str, location: str) -> str:
-        redacted, findings, local_summary = analyze_layer1_text(
-            text,
-            preset,
-            language,
-        )
-
+    def process(text: str, location: str) -> str:
+        redacted, findings, local = analyze_layer1_text(text, preset, language)
         for f in findings:
             f.file_id = file_id
-            f.original_filename = input_path.split("/")[-1]
+            f.original_filename = filename
             f.page_or_location = location
-
         all_findings.extend(findings)
-
-        for k, v in local_summary.items():
+        for k, v in local.items():
             summary[k] = summary.get(k, 0) + v
-
         return redacted
 
-    # Paragraphs
-    for idx, p in enumerate(doc.paragraphs):
-        if not p.text.strip():
-            continue
-        redacted = process_text(
-            p.text,
-            f"paragraph {idx + 1}",
-        )
-        p.text = redacted
+    for i, p in enumerate(doc.paragraphs):
+        if p.text.strip():
+            p.text = process(p.text, f"paragraph {i+1}")
 
-    # Tables
-    for t_idx, table in enumerate(doc.tables):
-        for r_idx, row in enumerate(table.rows):
-            for c_idx, cell in enumerate(row.cells):
-                if not cell.text.strip():
-                    continue
-                redacted = process_text(
-                    cell.text,
-                    f"table {t_idx + 1}, row {r_idx + 1}, cell {c_idx + 1}",
-                )
-                cell.text = redacted
+    for ti, table in enumerate(doc.tables):
+        for ri, row in enumerate(table.rows):
+            for ci, cell in enumerate(row.cells):
+                if cell.text.strip():
+                    cell.text = process(cell.text, f"table {ti+1}, row {ri+1}, cell {ci+1}")
 
     doc.save(output_path)
-
     return all_findings, summary
-
-
-def hash_file(path: str) -> str:
-    h = sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(8192), b""):
-            h.update(chunk)
-    return h.hexdigest()
