@@ -1,8 +1,14 @@
 import re
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
+
+try:
+    import spacy
+except ImportError:
+    spacy = None
 
 from .findings import Finding
 from .preset import Preset
+from .pseudonym import PseudonymMapper
 
 # ---------------------------
 # Regex patterns (Layer 1)
@@ -21,11 +27,22 @@ CREDITCARD_RE = re.compile(r"\b(?:\d[ -]*?){13,19}\b")
 # ---------------------------
 
 PRIORITY: Dict[str, int] = {
-    "EMAIL": 80,
-    "PHONE_NUMBER": 80,
+    "NATIONAL_ID": 100,
+    "PASSPORT_NUMBER": 100,
+    "MEDICAL_ID": 100,
     "BANK_ACCOUNT": 90,
     "CREDIT_CARD": 90,
+    "PERSON": 80,
+    "DATE_OF_BIRTH": 80,
+    "EMAIL": 80,
+    "PHONE_NUMBER": 80,
+    "VEHICLE_ID": 80,
+    "ADDRESS": 70,
     "IP_ADDRESS": 70,
+    "ORGANIZATION": 60,
+    "LOCATION": 60,
+    "ACCOUNT_USERNAME": 60,
+    "DATE": 40,
 }
 
 # ---------------------------
@@ -61,26 +78,60 @@ def apply_mask(value: str) -> str:
 
 
 # ---------------------------
-# Pseudonym mapping (per run)
+# spaCy handling
 # ---------------------------
 
-class PseudonymMapper:
-    def __init__(self) -> None:
-        self._counters: Dict[str, int] = {}
-        self._mapping: Dict[str, str] = {}
+_SPACY_MODEL_CACHE: Dict[str, object] = {}
 
-    def pseudonymise(self, entity_type: str, original: str) -> str:
-        key = f"{entity_type}:{original}"
 
-        if key in self._mapping:
-            return self._mapping[key]
+def load_spacy_model(language: str) -> Optional[object]:
+    if spacy is None:
+        return None
 
-        count = self._counters.get(entity_type, 0) + 1
-        self._counters[entity_type] = count
+    if language in _SPACY_MODEL_CACHE:
+        return _SPACY_MODEL_CACHE[language]
 
-        token = f"{entity_type}_{count:03d}"
-        self._mapping[key] = token
-        return token
+    model_name = {
+        "en": "en_core_web_sm",
+        "nl": "nl_core_news_sm",
+        "de": "de_core_news_sm",
+    }.get(language)
+
+    if not model_name:
+        return None
+
+    try:
+        nlp = spacy.load(model_name)
+    except Exception:
+        return None
+
+    _SPACY_MODEL_CACHE[language] = nlp
+    return nlp
+
+
+def spacy_entities(text: str, language: str) -> List[Tuple[int, int, str, str]]:
+    nlp = load_spacy_model(language)
+    if not nlp:
+        return []
+
+    doc = nlp(text)
+    results: List[Tuple[int, int, str, str]] = []
+
+    for ent in doc.ents:
+        if ent.label_ == "PERSON":
+            et = "PERSON"
+        elif ent.label_ in ("ORG",):
+            et = "ORGANIZATION"
+        elif ent.label_ in ("GPE", "LOC"):
+            et = "LOCATION"
+        elif ent.label_ == "DATE":
+            et = "DATE"
+        else:
+            continue
+
+        results.append((ent.start_char, ent.end_char, et, ent.text))
+
+    return results
 
 
 # ---------------------------
@@ -97,39 +148,43 @@ def analyze_layer1_text(
     summary: Dict[str, int] = {}
     pseudonym_mapper = PseudonymMapper()
 
-    # Collect candidate detections
-    candidates: List[Tuple[int, int, str, str]] = []
+    candidates: List[Tuple[int, int, str, str, str]] = []
+    # tuple: start, end, entity_type, value, source
 
+    # Regex detections
     for m in EMAIL_RE.finditer(text):
-        candidates.append((m.start(), m.end(), "EMAIL", m.group(0)))
+        candidates.append((m.start(), m.end(), "EMAIL", m.group(0), "pattern"))
 
     for m in PHONE_RE.finditer(text):
-        candidates.append((m.start(), m.end(), "PHONE_NUMBER", m.group(0)))
+        candidates.append((m.start(), m.end(), "PHONE_NUMBER", m.group(0), "pattern"))
 
     for m in IBAN_RE.finditer(text):
-        candidates.append((m.start(), m.end(), "BANK_ACCOUNT", m.group(0)))
+        candidates.append((m.start(), m.end(), "BANK_ACCOUNT", m.group(0), "pattern"))
 
     for m in IPV4_RE.finditer(text):
-        candidates.append((m.start(), m.end(), "IP_ADDRESS", m.group(0)))
+        candidates.append((m.start(), m.end(), "IP_ADDRESS", m.group(0), "pattern"))
 
     for m in CREDITCARD_RE.finditer(text):
         raw = m.group(0)
         if luhn_ok(raw):
-            candidates.append((m.start(), m.end(), "CREDIT_CARD", raw))
+            candidates.append((m.start(), m.end(), "CREDIT_CARD", raw, "pattern"))
 
-    # Sort candidates by start position and length
+    # spaCy detections
+    for s, e, et, val in spacy_entities(text, language):
+        candidates.append((s, e, et, val, "spacy"))
+
+    # Sort for overlap resolution
     candidates.sort(key=lambda x: (x[0], -(x[1] - x[0])))
 
-    # Resolve overlaps using priority
-    kept: List[Tuple[int, int, str, str]] = []
+    kept: List[Tuple[int, int, str, str, str]] = []
 
     for cand in candidates:
-        s, e, et, val = cand
+        s, e, et, val, src = cand
         pr = PRIORITY.get(et, 0)
 
         replaced = False
         for i, k in enumerate(kept):
-            ks, ke, ket, _ = k
+            ks, ke, ket, _, _ = k
             if not (e <= ks or s >= ke):
                 kpr = PRIORITY.get(ket, 0)
                 if pr > kpr or (pr == kpr and (e - s) > (ke - ks)):
@@ -144,16 +199,15 @@ def analyze_layer1_text(
     file_id = "TEXT_0001"
     original_filename = ""
 
-    for s, e, et, val in kept:
+    for s, e, et, val, src in kept:
         if not preset.entities_enabled.get(et, True):
             continue
 
         priority = PRIORITY.get(et, 0)
-        confidence = 95
+        confidence = 90 if src == "spacy" else 95
         threshold = preset.minimum_confidence
         uncertain = confidence < threshold
 
-        # Determine action
         if priority >= 90:
             action = "redact"
         elif priority >= 80:
@@ -194,8 +248,8 @@ def analyze_layer1_text(
                 entity_priority=priority,
                 detected_text=val,
                 context_snippet=context(text, s, e),
-                detection_source="pattern",
-                model_id="",
+                detection_source=src,
+                model_id="spacy" if src == "spacy" else "",
                 confidence_score=confidence,
                 confidence_threshold=threshold,
                 uncertainty_flag=uncertain,
