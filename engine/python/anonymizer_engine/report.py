@@ -4,14 +4,14 @@ import json
 import os
 from dataclasses import asdict
 from datetime import datetime, timezone
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
-from .findings import FINDINGS_CSV_HEADER, Finding
 from .preset import Preset
+from .findings import Finding, FINDINGS_CSV_HEADER
 
 
-def sha256_text(s: str) -> str:
-    return hashlib.sha256(s.encode("utf-8")).hexdigest()
+def sha256_text(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
 def new_run_id() -> str:
@@ -19,10 +19,8 @@ def new_run_id() -> str:
     return f"RUN_{ts}"
 
 
-def make_run_folder(base_dir: str, run_id: str) -> str:
-    os.makedirs(base_dir, exist_ok=True)
-    folder = os.path.join(base_dir, run_id)
-    os.makedirs(folder, exist_ok=True)
+def make_run_folder(base: str, run_id: str) -> str:
+    folder = os.path.join(base, run_id)
     os.makedirs(os.path.join(folder, "output"), exist_ok=True)
     os.makedirs(os.path.join(folder, "logs"), exist_ok=True)
     return folder
@@ -30,15 +28,20 @@ def make_run_folder(base_dir: str, run_id: str) -> str:
 
 def write_json(path: str, obj: Dict) -> None:
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(obj, f, ensure_ascii=False, indent=2)
+        json.dump(obj, f, indent=2, ensure_ascii=False)
 
 
-def write_findings_csv(path: str, run_id: str, file_hash: str, findings: List[Finding]) -> None:
+def write_findings_csv(
+    path: str,
+    run_id: str,
+    file_hash: str,
+    findings: List[Finding],
+) -> None:
     with open(path, "w", encoding="utf-8", newline="") as f:
-        w = csv.writer(f)
-        w.writerow(FINDINGS_CSV_HEADER)
+        writer = csv.writer(f)
+        writer.writerow(FINDINGS_CSV_HEADER)
         for fd in findings:
-            row = [
+            writer.writerow([
                 run_id,
                 fd.file_id,
                 fd.original_filename,
@@ -60,20 +63,28 @@ def write_findings_csv(path: str, run_id: str, file_hash: str, findings: List[Fi
                 str(fd.blacklist_match).lower(),
                 fd.language,
                 fd.notes,
-            ]
-            w.writerow(row)
+            ])
+
+
+def preset_to_json(preset: Preset) -> Dict:
+    return asdict(preset)
 
 
 def build_model_inventory() -> Dict:
     return {
         "engine": {"name": "anonymizer-engine", "version": "0.1.0"},
-        "spacy": None,
+        "spacy": {"used": True},
         "candle": None,
         "presidio": None,
     }
 
 
-def build_run_report(run_id: str, preset: Preset, summary: Dict[str, int], file_count: int) -> Dict:
+def build_run_report(
+    run_id: str,
+    preset: Preset,
+    summary: Dict[str, int],
+    file_count: int,
+) -> Dict:
     return {
         "run_id": run_id,
         "started_at": datetime.now(timezone.utc).isoformat(),
@@ -81,11 +92,5 @@ def build_run_report(run_id: str, preset: Preset, summary: Dict[str, int], file_
         "preset_id": preset.preset_id,
         "summary": summary,
         "file_count": file_count,
-        "fallbacks": [],
         "ocr_used": False,
-        "notes": "",
     }
-
-
-def preset_to_json(p: Preset) -> Dict:
-    return asdict(p)
