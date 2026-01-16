@@ -1,0 +1,179 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      layer:
+        description: 'Which layers to bundle'
+        required: true
+        default: 'layer1'
+        type: choice
+        options:
+          - layer1
+          - layer1-layer2
+          - all
+
+jobs:
+  build-python-sidecar:
+    name: Build Python Sidecar (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            artifact: anonymizer_engine.exe
+            target: windows
+          - os: macos-latest
+            artifact: anonymizer_engine
+            target: macos
+          - os: ubuntu-latest
+            artifact: anonymizer_engine
+            target: linux
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          cd engine/python
+          pip install -e .
+          pip install pyinstaller
+
+      - name: Install Presidio
+        run: |
+          pip install presidio-analyzer presidio-anonymizer
+
+      - name: Download spaCy models
+        run: |
+          python -m spacy download en_core_web_sm
+          python -m spacy download nl_core_news_sm
+          python -m spacy download de_core_news_sm
+          python -m spacy download fr_core_news_sm
+          python -m spacy download en_core_web_lg
+
+      - name: Build standalone executable
+        run: |
+          cd engine/python
+          python build_standalone.py --layer1 --layer3 --name anonymizer_engine
+
+      - name: Upload sidecar artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sidecar-${{ matrix.target }}
+          path: engine/python/dist/${{ matrix.artifact }}
+
+  build-desktop-app:
+    name: Build Desktop App (${{ matrix.os }})
+    needs: build-python-sidecar
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            target: windows
+            ext: .msi
+          - os: macos-latest
+            target: macos
+            ext: .dmg
+          - os: ubuntu-latest
+            target: linux
+            ext: .AppImage
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download sidecar
+        uses: actions/download-artifact@v4
+        with:
+          name: sidecar-${{ matrix.target }}
+          path: apps/desktop/src-tauri/binaries/
+
+      - name: Make sidecar executable (Unix)
+        if: matrix.os != 'windows-latest'
+        run: chmod +x apps/desktop/src-tauri/binaries/anonymizer_engine
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev
+
+      - name: Install Node dependencies
+        run: |
+          cd apps/desktop
+          npm install
+
+      - name: Build Tauri app
+        run: |
+          cd apps/desktop
+          npm run tauri build
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: legal-anonymizer-${{ matrix.target }}
+          path: |
+            apps/desktop/src-tauri/target/release/bundle/**/*${{ matrix.ext }}
+            apps/desktop/src-tauri/target/release/bundle/**/*.exe
+
+  create-release:
+    name: Create GitHub Release
+    needs: build-desktop-app
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/legal-anonymizer-windows/**/*
+            artifacts/legal-anonymizer-macos/**/*
+            artifacts/legal-anonymizer-linux/**/*
+          body: |
+            ## Legal Anonymizer ${{ github.ref_name }}
+
+            **One-click install - No Python required!**
+
+            This release bundles everything needed:
+            - spaCy with language models (EN, NL, DE, FR)
+            - All PII detection patterns
+            - Desktop app for Windows, macOS, and Linux
+
+            ### Download
+
+            | Platform | Download |
+            |----------|----------|
+            | Windows | `.msi` installer |
+            | macOS | `.dmg` disk image |
+            | Linux | `.AppImage` |
+
+            ### Quick Start
+            1. Download the installer for your platform
+            2. Install and run
+            3. Paste text or select files to anonymize
+            4. No internet connection required!
+
+          draft: false
+          prerelease: false
