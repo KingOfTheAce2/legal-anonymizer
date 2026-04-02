@@ -45,7 +45,8 @@ jobs:
     - name: Lint with ruff
       run: |
         cd engine/python
-        ruff check .
+        echo "ruff version: $(ruff --version)"
+        ruff check . --output-format=github
 
     - name: Type check with mypy
       run: |
