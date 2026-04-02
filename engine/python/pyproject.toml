@@ -99,13 +99,9 @@ line-length = 100
 target-version = "py310"
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "N", "UP", "B", "C4"]
-ignore = [
-    "E501",   # Line length handled by formatter
-    "UP006",  # Use `list` instead of `List` — existing codebase uses typing imports
-    "UP007",  # Use `X | Y` instead of `Optional[X]` — existing codebase uses typing imports
-    "UP035",  # `typing.List` deprecated — existing codebase uses typing imports
-]
+# Start with stable core rules only; UP/N/B/C4/I can be re-added incrementally
+select = ["E", "F", "W"]
+ignore = ["E501"]  # Line length handled by formatter
 
 [tool.mypy]
 python_version = "3.10"
