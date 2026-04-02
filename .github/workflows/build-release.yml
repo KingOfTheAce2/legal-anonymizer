@@ -25,6 +25,7 @@ jobs:
   build-sidecar:
     name: Python sidecar (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    continue-on-error: true   # one flaky runner won't cancel other platforms
     strategy:
       fail-fast: false
       matrix:
@@ -96,6 +97,7 @@ jobs:
   build-installer:
     name: Installer (${{ matrix.os }})
     needs: build-sidecar
+    if: always()   # run even if some sidecars were cancelled
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -126,10 +128,18 @@ jobs:
 
       # ── Drop the pre-built sidecar into the Tauri binaries folder ──
       - name: Download sidecar
+        id: download_sidecar
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: sidecar-${{ matrix.triple }}
           path: apps/desktop/src-tauri/binaries/
+
+      - name: Abort if sidecar unavailable
+        if: steps.download_sidecar.outcome != 'success'
+        run: |
+          echo "::warning::Sidecar artifact for ${{ matrix.triple }} not available (sidecar build was skipped or cancelled). Skipping installer."
+          exit 1
 
       - name: Make sidecar executable (macOS / Linux)
         if: runner.os != 'Windows'
@@ -199,7 +209,7 @@ jobs:
         with:
           name: installer-${{ matrix.label }}
           path: dist-release/*
-          if-no-files-found: error
+          if-no-files-found: warn
 
 # ─────────────────────────────────────────────────────────────────
 # JOB 3 — Publish GitHub Release (only when triggered by a tag)
@@ -208,7 +218,7 @@ jobs:
     name: Publish GitHub Release
     needs: build-installer
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    if: always() && startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: write
 
