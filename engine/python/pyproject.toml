@@ -106,9 +106,12 @@ ignore = ["E501"]  # Line length handled by formatter
 [tool.ruff.lint.per-file-ignores]
 # __init__.py files intentionally re-export symbols; F401 fires on those
 "**/__init__.py" = ["F401"]
-# Test files and scripts may import symbols used only via fixtures or indirectly
+# Test files may import symbols used only indirectly via fixtures
 "tests/**/*.py" = ["F401"]
-"scripts/*.py" = ["F401"]
+# Scripts have intentional import-after-code patterns (frozen binary path setup)
+# and may have indirect imports; suppress F401 and E402 for them
+"scripts/*.py" = ["F401", "E402"]
+"scripts/sidecar_entrypoint.py" = ["F401", "E402"]
 
 [tool.mypy]
 python_version = "3.10"
