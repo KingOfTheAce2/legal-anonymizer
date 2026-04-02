@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  anonymizer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: legal-anonymizer:latest
+    container_name: legal-anonymizer
+    volumes:
+      # Mount input/output directories
+      - ./data/input:/data/input:ro
+      - ./data/output:/data/output
+      # Mount models directory for caching
+      - ./models:/app/models
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    command: batch --input /data/input --output /data/output
+    restart: unless-stopped
+
+  # Development service with hot reload
+  anonymizer-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: legal-anonymizer-dev
+    volumes:
+      - ./engine/python:/app/engine/python
+      - ./scripts:/app/scripts
+      - ./data:/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=DEBUG
+    command: bash
+    stdin_open: true
+    tty: true
+    profiles:
+      - dev

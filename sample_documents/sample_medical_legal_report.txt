@@ -1,0 +1,216 @@
+CONFIDENTIAL — LEGAL PROFESSIONAL PRIVILEGE
+
+EXPERT MEDICAL REPORT
+Prepared for: Ashworth, Pemberton & Malik Solicitors LLP
+Matter Reference: APM/2024/CLIN/0047
+Expert:          Prof. Robert James Whitfield, MBChB, FRCS, MD
+GMC Number:      7234891
+Address:         Department of Clinical Medicine, St. Bartholomew's Hospital,
+                 West Smithfield, London, EC1A 7BE
+Email:           r.whitfield@bartshealth.nhs.uk
+Telephone:       +44 20 7601 8347
+Date of Report:  20 January 2024
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+A. INTRODUCTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+I have been instructed by Ashworth, Pemberton & Malik Solicitors LLP, 14 Gray's Inn Road,
+London WC1X 8HN, on behalf of the Claimant, to provide an independent expert medical opinion
+in the matter of:
+
+  CLAIMANT:   Margaret Rose Callahan (née Donnelly)
+  DOB:        14 February 1959
+  NHS Number: 943 476 5600
+  Address:    72 Cavendish Square, London W1G 0PZ
+  Telephone:  +44 7700 900412
+  Email:      margaret.callahan@btinternet.com
+  GP:         Dr. Priya Vasanthi Agarwal, Cavendish Medical Practice,
+              17 Welbeck Street, London W1G 9YN | priya.agarwal@nhs.net
+
+  DEFENDANT:  Imperial Healthcare NHS Trust, Hammersmith Hospital,
+              Du Cane Road, London W12 0HS
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+B. MEDICAL BACKGROUND
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+B.1 Patient Identification
+
+The Claimant, Mrs. Margaret Rose Callahan, NHS Number 943 476 5600, Hospital Reference
+HH-2022-MRC-089341, presented at Hammersmith Hospital Emergency Department on 17 March 2022
+at 14:32. Her National Insurance Number is NJ 12 34 56 D. She holds a current UK passport,
+number GB A7284930.
+
+B.2 Medical Record Summary
+
+The following entries are drawn from Mrs. Callahan's NHS Summary Care Record (SCR) and
+inpatient records held under MRN HH-089341:
+
+  DATE            EVENT                                         CLINICIAN
+  ─────────────── ─────────────────────────────────────────── ─────────────────────────────
+  14 Jan 2020     Initial GP consultation — hypertension       Dr. P.V. Agarwal (NMC: 99A1234)
+  22 Mar 2021     Cardiology referral (palpitations)           Dr. Andrew Fairweather, MRCP
+  03 Aug 2021     ECG, echocardiogram — mild LVH noted         Cardiac Physiology, Hammersmith
+  17 Mar 2022     Emergency admission (chest pain, SOB)        Registrar Dr. Sundeep Mehta
+  17 Mar 2022     PCI procedure commenced 16:45                Consultant Mr. Victor Osei-Bonsu
+  18 Mar 2022     Post-operative complication: retroperitoneal haemorrhage
+  20 Mar 2022     ICU transfer, Dr. Karen Louise Barnett (GMC 6182374)
+  28 Mar 2022     Discharge — MRS CALLAHAN DISCHARGED to home care
+
+B.3 Treating Clinicians Identified
+
+  1. Mr. Victor Osei-Bonsu FRCS(CTh)
+     Consultant Cardiac Surgeon
+     GMC Number: 5841029
+     Email: v.osei-bonsu@imperial.nhs.uk
+     NPI (US equivalent reference): 1234567890
+
+  2. Dr. Sundeep Ramesh Mehta MRCP
+     Cardiology Registrar
+     GMC Number: 7193842
+     Employee No.: IMP-DOC-04417
+     Email: sundeep.mehta@imperial.nhs.uk
+     Mobile: +44 7700 900837
+
+  3. Dr. Karen Louise Barnett FICM
+     Consultant in Intensive Care Medicine
+     GMC Number: 6182374
+     Email: k.barnett@imperial.nhs.uk
+
+B.4 Medication Record
+
+The following medications were prescribed during the inpatient admission:
+
+  Medication                     Dose        Prescriber     Batch No.
+  ─────────────────────────────  ──────────  ─────────────  ─────────────
+  Aspirin (enteric-coated)       75 mg OD    Dr. Mehta      UK-ASP-220317-04
+  Clopidogrel                    75 mg OD    Mr. Osei-Bonsu UK-CLO-220317-11
+  Metoprolol succinate           95 mg OD    Dr. Barnett    UK-MET-220320-08
+  Unfractionated heparin (IV)    1000 IU/hr  Mr. Osei-Bonsu LOT: UFH-220317-099A
+  Morphine sulphate              10 mg PRN   Dr. Mehta      MORP-220318-B22
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+C. SECOND CLAIMANT — RELATED CASE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+A related clinical negligence matter involves:
+
+  CLAIMANT:   Thomas Edward Callahan (Mrs. Callahan's husband)
+  DOB:        30 August 1955
+  NHS Number: 487 293 1056
+  NI Number:  QQ 98 76 54 C
+  Address:    72 Cavendish Square, London W1G 0PZ
+  Phone:      +44 20 7946 0837
+  Email:      t.callahan1955@gmail.com
+  UK Passport: GB P4820193
+
+Thomas Callahan's vehicle — registered as Toyota Avensis, plate LK19 PBH — was photographed
+at the hospital on the dates of incidents relevant to this matter.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+D. ADDITIONAL WITNESSES AND THIRD PARTIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+D.1 Nursing Witness
+
+Sister Bridget Mary O'Sullivan
+  NMC Registration: 12A3456789
+  Email: b.osullivan@imperial.nhs.uk
+  Phone: +44 7700 900274
+  Address: 44 Elgin Crescent, London W11 2JP
+
+D.2 Hospital IT Forensics
+
+Access to the patient record system (CRS) was logged from:
+  Terminal IP: 172.16.0.47
+  Admin terminal IPv6: fe80::1%eth0
+  System access account: osullivan_b (Employee ID IMP-NRS-00831)
+  CRS Record Access: MRN HH-089341 accessed 14 times between 17 Mar – 28 Mar 2022
+
+D.3 Private Healthcare Provider (Second Opinion)
+
+Dr. Francesca Isabella Moretti
+  Organisation: Lister Private Hospital, Chelsea Bridge Road, London SW1W 8RH
+  Email: f.moretti@listerhospital.co.uk
+  GMC Number: 8294713
+  Phone: 020 7730 7733
+
+  Invoice: LPH-INV-2022-04471
+  Amount:  £2,400.00 (incl. VAT)
+  Payment IBAN: GB29NWBK60161331926819
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+E. FINANCIAL IMPACT SCHEDULE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Loss of earnings calculation for Mrs. Callahan (DOB 14 February 1959, NI: NJ 12 34 56 D):
+
+  Pre-accident earnings:    £64,800 per annum (gross)
+  Employer:                 Whitmore & Associates Ltd, 200 Aldersgate Street, EC1A 4HD
+  Employer reference:       WHT-HR-EMP-09284
+  Employee PAYE ref:        475/WL93847
+  Private pension IBAN:     GB98MIDL07009312345678 (HSBC, Sort Code 40-47-84)
+  Credit card on file:      Visa 4916338506082832 (for medical expense claims)
+
+  Projected future loss:    £482,000 over 7.4 years (to state pension age 66)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+F. EXPERT OPINION SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+In my opinion, the care provided by Mr. Victor Osei-Bonsu and the clinical team at Hammersmith
+Hospital on 17–20 March 2022 fell below the standard of a reasonably competent consultant
+cardiac surgeon. Specifically:
+
+1. The decision to proceed with PCI without pre-operative CT angiography represents a departure
+   from NICE Guideline NG185 (issued 18 November 2020).
+
+2. The retroperitoneal haemorrhage was a foreseeable consequence of the anticoagulation
+   protocol adopted, and a more conservative dosing regimen should have been employed.
+
+3. Had Mrs. Callahan (NHS 943 476 5600) received the standard of care expected, on the
+   balance of probabilities she would not have sustained the sequelae described.
+
+I confirm that I understand my duty to the Court and I have complied with that duty. I confirm
+that the opinions expressed in this report are my own.
+
+Signed: _________________________________
+Prof. Robert James Whitfield MBChB FRCS MD
+GMC Number: 7234891
+Date: 20 January 2024
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+APPENDIX 1 — GP REFERRAL LETTER (EXTRACT)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+From: Dr. Priya Vasanthi Agarwal
+      Cavendish Medical Practice, 17 Welbeck Street, London W1G 9YN
+      GMC: 6739281 | Email: priya.agarwal@nhs.net | Tel: 020 7486 3920
+
+To:   Cardiology Outpatients, Hammersmith Hospital
+Date: 22 March 2021
+
+Dear Colleagues,
+
+I am referring Mrs. Margaret Rose Callahan, DOB 14/02/1959, NHS 943 476 5600,
+of 72 Cavendish Square, London W1G 0PZ, for urgent cardiology assessment.
+
+Mrs. Callahan presents with a six-week history of episodic palpitations and exertional
+dyspnoea. Her resting ECG (performed at this practice on 19 March 2021 by our practice
+nurse, Sister Janet Williams, NMC 09B2341789) showed sinus rhythm with occasional
+ectopics. Her most recent blood pressure was 158/94 mmHg.
+
+Her current medications include Amlodipine 10 mg OD and Ramipril 5 mg OD.
+She is an ex-smoker (20 pack-years) and her BMI is 29.3.
+
+Her insurance policy number with AXA Health is AXA-UK-8827340192, authorisation
+code AUTHZ-2021-HH-0042, covering treatment up to £80,000.
+
+I would be grateful for your earliest appointment.
+
+Yours sincerely,
+Dr. Priya Vasanthi Agarwal MBBS MRCGP
+Cavendish Medical Practice
+
+END OF DOCUMENT

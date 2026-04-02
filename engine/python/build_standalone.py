@@ -195,48 +195,18 @@ def build_executable(name: str = "anonymizer_engine", layers: list[str] = None):
             except:
                 pass
 
-    # Add the main script
-    script_path = Path(__file__).parent / "anonymizer_engine" / "cli.py"
+    # Hidden imports for sidecar dependencies
+    cmd.extend([
+        "--hidden-import", "langdetect",
+        "--hidden-import", "dateutil",
+        "--hidden-import", "dateutil.parser",
+    ])
+
+    # Use the real sidecar entrypoint
+    script_path = Path(__file__).parent / "scripts" / "sidecar_entrypoint.py"
     if not script_path.exists():
-        # Create a simple CLI entry point
-        script_path = Path(__file__).parent / "main.py"
-        script_path.write_text('''
-#!/usr/bin/env python3
-"""CLI entry point for bundled anonymizer engine."""
-import sys
-import json
-from anonymizer_engine.engine import AnonymizerEngine
-
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: anonymizer_engine <command> [args]")
-        print("Commands: analyze_text, analyze_file, version")
+        print(f"ERROR: Entry point not found at {script_path}")
         sys.exit(1)
-
-    command = sys.argv[1]
-
-    if command == "version":
-        print("Legal Anonymizer Engine v1.0.0")
-        print("Bundled with spaCy models for offline use")
-        return
-
-    if command == "analyze_text":
-        # Read JSON input from stdin
-        input_data = json.loads(sys.stdin.read())
-        engine = AnonymizerEngine()
-        result = engine.analyze_text(
-            input_data["text"],
-            input_data.get("preset", {})
-        )
-        print(json.dumps(result))
-        return
-
-    print(f"Unknown command: {command}")
-    sys.exit(1)
-
-if __name__ == "__main__":
-    main()
-''')
 
     cmd.append(str(script_path))
 

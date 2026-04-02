@@ -6,6 +6,24 @@ const isTauriAvailable = (): boolean => {
   return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
 };
 
+// Web server URL for browser mode (Python backend)
+const WEB_API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8080";
+
+// Check if web API is available
+let webApiAvailable = false;
+
+async function checkWebApi(): Promise<boolean> {
+  if (isTauriAvailable()) return false;
+  try {
+    const response = await fetch(`${WEB_API_URL}/health`, { method: "GET" });
+    webApiAvailable = response.ok;
+    return webApiAvailable;
+  } catch {
+    webApiAvailable = false;
+    return false;
+  }
+}
+
 // Dynamic imports for Tauri APIs (only when available)
 let tauriInvoke: typeof import("@tauri-apps/api/core").invoke | null = null;
 let tauriOpen: typeof import("@tauri-apps/plugin-dialog").open | null = null;
@@ -23,8 +41,16 @@ async function loadTauriApis() {
   }
 }
 
-// Initialize on module load
-loadTauriApis();
+// Single initialization promise — prevents race conditions when callers
+// read webApiAvailable or tauriInvoke before the async checks complete.
+let _initPromise: Promise<void> | null = null;
+
+function ensureInitialized(): Promise<void> {
+  if (!_initPromise) {
+    _initPromise = Promise.all([checkWebApi(), loadTauriApis()]).then(() => {});
+  }
+  return _initPromise;
+}
 
 // ============================================================================
 // Types
@@ -148,6 +174,222 @@ export const DEFAULT_LANGUAGE_WHITELISTS: Record<string, string[]> = {
     "thereof",      // legal term
     "whereby",      // legal term
   ],
+  // Bulgarian - common legal/formal words
+  bg: [
+    "настоящото",   // herewith/this
+    "съгласно",     // according to
+    "съответно",    // accordingly
+    "доколкото",    // insofar as
+    "независимо",   // regardless
+    "вследствие",   // as a result
+    "въпреки",      // despite
+    "следователно", // therefore
+    "предвид",      // in view of
+    "относно",      // regarding
+  ],
+  // Croatian - common legal/formal words
+  hr: [
+    "sukladno",     // in accordance with
+    "temeljem",     // based on
+    "navedeno",     // stated/mentioned
+    "naime",        // namely
+    "međutim",      // however
+    "dakle",        // therefore
+    "odnosno",      // i.e./or rather
+    "stoga",        // therefore
+    "budući",       // since/as
+    "vezano",       // related to
+  ],
+  // Czech - common legal/formal words
+  cs: [
+    "přičemž",      // whereas/while
+    "avšak",        // however
+    "neboť",        // because
+    "ačkoli",       // although
+    "nicméně",      // nevertheless
+    "tudíž",        // therefore
+    "jakožto",      // as/in the capacity of
+    "vyjma",        // except
+    "přestože",     // even though
+    "ohledně",      // regarding
+  ],
+  // Danish - common legal/formal words
+  da: [
+    "herunder",     // including/hereunder
+    "henholdsvis",  // respectively
+    "tillige",      // also/in addition
+    "ligeledes",    // likewise
+    "idet",         // as/since
+    "hvorfor",      // therefore/why
+    "således",      // thus/so
+    "dermed",       // thereby
+    "endvidere",    // furthermore
+    "hvorimod",     // whereas/whereas
+  ],
+  // Estonian - common legal/formal words
+  et: [
+    "vastavalt",    // according to
+    "käesolev",     // present/this
+    "sealhulgas",   // including
+    "ühtlasi",      // also/simultaneously
+    "seetõttu",     // therefore
+    "nimelt",       // namely
+    "siiski",       // however
+    "järelikult",   // consequently
+    "kuivõrd",      // insofar as
+    "arvestades",   // considering
+  ],
+  // Finnish - common legal/formal words
+  fi: [
+    "mikäli",       // if/insofar as
+    "siten",        // thus
+    "lisäksi",      // in addition
+    "kuitenkin",    // however
+    "vaikka",       // although
+    "jolloin",      // whereupon
+    "koska",        // because
+    "siinä",        // therein
+    "noudattaen",   // in accordance with
+    "edellyttäen",  // provided that
+  ],
+  // Greek - common legal/formal words
+  el: [
+    "εφόσον",       // provided that
+    "πλην",         // however/except
+    "ωσαύτως",      // likewise
+    "εντούτοις",    // nevertheless
+    "ήτοι",         // namely/i.e.
+    "ιδίως",        // in particular
+    "αντιστοίχως",  // respectively
+    "δυνάμει",      // by virtue of
+    "κατόπιν",      // following/after
+    "εκτός",        // except/unless
+  ],
+  // Hungarian - common legal/formal words
+  hu: [
+    "amennyiben",   // insofar as/if
+    "azonban",      // however
+    "emellett",     // moreover
+    "ezáltal",      // thereby
+    "következésképpen", // consequently
+    "illetve",      // respectively/or
+    "tekintettel",  // considering
+    "figyelemmel",  // in view of
+    "egyebekben",   // otherwise/in other respects
+    "mindazonáltal", // nevertheless
+  ],
+  // Irish - common legal/formal words
+  ga: [
+    "dá bhrí sin",  // therefore
+    "áfach",        // however
+    "ina theannta", // in addition
+    "faoi réir",    // subject to
+    "de réir",      // according to
+    "i gcomhréir",  // in accordance with
+    "maidir le",    // regarding
+    "chomh maith",  // also/as well
+  ],
+  // Latvian - common legal/formal words
+  lv: [
+    "atbilstoši",   // accordingly
+    "turklāt",      // moreover
+    "tomēr",        // however
+    "tādēļ",        // therefore
+    "proti",        // namely
+    "savukārt",     // on the other hand
+    "ievērojot",    // considering
+    "saskaņā",      // in accordance with
+    "tostarp",      // including
+    "neatkarīgi",   // regardless
+  ],
+  // Lithuanian - common legal/formal words
+  lt: [
+    "atsižvelgiant", // considering
+    "tačiau",       // however
+    "todėl",        // therefore
+    "taigi",        // thus
+    "būtent",       // namely
+    "laikantis",    // in accordance with
+    "vadovaujantis", // pursuant to
+    "nepaisant",    // notwithstanding
+    "kaip antai",   // such as
+    "be to",        // moreover
+  ],
+  // Maltese - common legal/formal words
+  mt: [
+    "madankollu",   // however
+    "sabiex",       // in order to
+    "skont",        // according to
+    "minkejja",     // notwithstanding
+    "peress li",    // since/whereas
+    "b'hekk",       // thus
+    "barra minn hekk", // moreover
+    "f'konformità", // in conformity with
+    "fl-istess waqt", // at the same time
+  ],
+  // Romanian - common legal/formal words
+  ro: [
+    "întrucât",     // whereas
+    "astfel",       // thus
+    "totodată",     // also/simultaneously
+    "totuși",       // however
+    "prin urmare",  // therefore
+    "în temeiul",   // pursuant to
+    "respectiv",    // respectively
+    "deoarece",     // because
+    "potrivit",     // according to
+    "referitor",    // regarding
+  ],
+  // Slovak - common legal/formal words
+  sk: [
+    "pritom",       // while/at the same time
+    "avšak",        // however
+    "teda",         // therefore
+    "totiž",        // namely
+    "hoci",         // although
+    "pričom",       // whereas
+    "napriek",      // despite
+    "podľa",        // according to
+    "vzhľadom",     // considering
+    "okrem",        // except/besides
+  ],
+  // Slovenian - common legal/formal words
+  sl: [
+    "skladno",      // in accordance with
+    "vendar",       // however
+    "zato",         // therefore
+    "namreč",       // namely
+    "kljub",        // despite
+    "torej",        // thus
+    "obenem",       // simultaneously
+    "glede na",     // considering
+    "v skladu",     // in accordance
+    "razen",        // except
+  ],
+  // Swedish - common legal/formal words
+  sv: [
+    "varigenom",    // whereby
+    "emellertid",   // however
+    "däremot",      // on the other hand
+    "härutöver",    // moreover/in addition
+    "dessutom",     // furthermore
+    "enligt",       // according to
+    "likväl",       // nevertheless
+    "varför",       // therefore/why
+    "varvid",       // whereupon
+    "oaktat",       // notwithstanding
+  ],
+};
+
+/** A single PII finding with position information for highlighting */
+export type FindingItem = {
+  entity_type: string;
+  detected_text: string;
+  start: number | null;
+  end: number | null;
+  confidence: number;
+  action: string;
+  pseudonym: string;
 };
 
 export type AnalyzeTextResponse = {
@@ -157,6 +399,7 @@ export type AnalyzeTextResponse = {
   summary: Record<string, number>;
   findings_count: number;
   language: string;
+  findings?: FindingItem[];
 };
 
 export type AnalyzeFileResponse = {
@@ -171,64 +414,119 @@ export type AnalyzeFileResponse = {
 // Browser Preview Mode - Mock Implementation
 // ============================================================================
 
+/** Helper to find all regex matches with positions */
+function findAllMatches(text: string, pattern: RegExp, entityType: string, confidence: number, action: string): FindingItem[] {
+  const findings: FindingItem[] = [];
+  let match;
+  const regex = new RegExp(pattern.source, 'g');
+  while ((match = regex.exec(text)) !== null) {
+    findings.push({
+      entity_type: entityType,
+      detected_text: match[0],
+      start: match.index,
+      end: match.index + match[0].length,
+      confidence,
+      action,
+      pseudonym: "",
+    });
+  }
+  return findings;
+}
+
 function mockAnalyzeText(text: string, preset: Preset): AnalyzeTextResponse {
   // Simple regex-based mock anonymization for browser preview
-  let redacted = text;
   const summary: Record<string, number> = {};
+  const allFindings: FindingItem[] = [];
 
   // Email pattern
-  const emailMatches = text.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g);
-  if (emailMatches) {
-    summary["EMAIL"] = emailMatches.length;
-    redacted = redacted.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, "[EMAIL_REDACTED]");
+  const emailPattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g;
+  if (preset.entities_enabled.EMAIL !== false) {
+    const emailFindings = findAllMatches(text, emailPattern, "EMAIL", 95, "redact");
+    allFindings.push(...emailFindings);
+    if (emailFindings.length > 0) summary["EMAIL"] = emailFindings.length;
   }
 
   // Phone pattern (international)
-  const phoneMatches = text.match(/\+\d{1,4}[\s.-]?\d{1,4}[\s.-]?\d{1,9}/g);
-  if (phoneMatches) {
-    summary["PHONE_NUMBER"] = phoneMatches.length;
-    redacted = redacted.replace(/\+\d{1,4}[\s.-]?\d{1,4}[\s.-]?\d{1,9}/g, "[PHONE_REDACTED]");
+  const phonePattern = /\+\d{1,4}[\s.-]?\d{1,4}[\s.-]?\d{1,9}/g;
+  if (preset.entities_enabled.PHONE_NUMBER !== false) {
+    const phoneFindings = findAllMatches(text, phonePattern, "PHONE_NUMBER", 90, "redact");
+    allFindings.push(...phoneFindings);
+    if (phoneFindings.length > 0) summary["PHONE_NUMBER"] = phoneFindings.length;
   }
 
   // IBAN pattern
-  const ibanMatches = text.match(/\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b/g);
-  if (ibanMatches) {
-    summary["BANK_ACCOUNT"] = ibanMatches.length;
-    redacted = redacted.replace(/\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b/g, "[IBAN_REDACTED]");
+  const ibanPattern = /\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b/g;
+  if (preset.entities_enabled.BANK_ACCOUNT !== false) {
+    const ibanFindings = findAllMatches(text, ibanPattern, "BANK_ACCOUNT", 95, "redact");
+    allFindings.push(...ibanFindings);
+    if (ibanFindings.length > 0) summary["BANK_ACCOUNT"] = ibanFindings.length;
   }
 
-  // Simple name pattern (Title Case words)
+  // Credit card pattern
+  const ccPattern = /\b(?:4\d{3}|5[1-5]\d{2}|3[47]\d{2}|6011)[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g;
+  if (preset.entities_enabled.CREDIT_CARD !== false) {
+    const ccFindings = findAllMatches(text, ccPattern, "CREDIT_CARD", 95, "redact");
+    allFindings.push(...ccFindings);
+    if (ccFindings.length > 0) summary["CREDIT_CARD"] = ccFindings.length;
+  }
+
+  // Simple name pattern (Title Case words with prefix)
   const namePattern = /\b(Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.)\s+[A-Z][a-z]+\s+[A-Z][a-z]+\b/g;
-  const nameMatches = text.match(namePattern);
-  if (nameMatches) {
-    summary["PERSON"] = (summary["PERSON"] || 0) + nameMatches.length;
-    redacted = redacted.replace(namePattern, "[PERSON_REDACTED]");
+  if (preset.entities_enabled.PERSON !== false) {
+    const nameFindings = findAllMatches(text, namePattern, "PERSON", 90, "pseudonymise");
+    allFindings.push(...nameFindings);
+    if (nameFindings.length > 0) summary["PERSON"] = (summary["PERSON"] || 0) + nameFindings.length;
   }
 
-  // Standalone names (John Smith pattern)
+  // Standalone names (John Smith pattern) - with filtering
   const standaloneNamePattern = /\b([A-Z][a-z]+)\s+([A-Z][a-z]+)\b/g;
-  const standaloneMatches = text.match(standaloneNamePattern);
-  if (standaloneMatches && standaloneMatches.length > 0) {
-    // Only count as names if they look like names (not common words)
-    const commonWords = ["The", "This", "That", "These", "Those", "Medical", "Center", "Legal", "Amsterdam"];
-    const filteredNames = standaloneMatches.filter(m => {
-      const parts = m.split(" ");
-      return !commonWords.includes(parts[0]) && !commonWords.includes(parts[1]);
-    });
-    if (filteredNames.length > 0) {
-      summary["PERSON"] = (summary["PERSON"] || 0) + filteredNames.length;
-      filteredNames.forEach(name => {
-        redacted = redacted.replace(name, "[PERSON_REDACTED]");
-      });
+  if (preset.entities_enabled.PERSON !== false) {
+    const commonWords = ["The", "This", "That", "These", "Those", "Medical", "Center", "Legal", "Amsterdam", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let match;
+    while ((match = standaloneNamePattern.exec(text)) !== null) {
+      const parts = match[0].split(" ");
+      if (!commonWords.includes(parts[0]) && !commonWords.includes(parts[1])) {
+        // Check if this overlaps with an existing finding
+        const overlaps = allFindings.some(f =>
+          f.start !== null && f.end !== null &&
+          !(match!.index + match![0].length <= f.start || match!.index >= f.end)
+        );
+        if (!overlaps) {
+          allFindings.push({
+            entity_type: "PERSON",
+            detected_text: match[0],
+            start: match.index,
+            end: match.index + match[0].length,
+            confidence: 75,
+            action: "pseudonymise",
+            pseudonym: "",
+          });
+          summary["PERSON"] = (summary["PERSON"] || 0) + 1;
+        }
+      }
     }
   }
 
   // Date pattern
-  const dateMatches = text.match(/\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b/g);
-  if (dateMatches) {
-    summary["DATE"] = dateMatches.length;
-    if (preset.entities_enabled.DATE) {
-      redacted = redacted.replace(/\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b/g, "[DATE_REDACTED]");
+  const datePattern = /\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b/g;
+  if (preset.entities_enabled.DATE !== false) {
+    const dateFindings = findAllMatches(text, datePattern, "DATE", 85, "redact");
+    allFindings.push(...dateFindings);
+    if (dateFindings.length > 0) summary["DATE"] = dateFindings.length;
+  }
+
+  // Sort findings by position
+  allFindings.sort((a, b) => (a.start ?? 0) - (b.start ?? 0));
+
+  // Build redacted text by applying replacements in reverse order
+  let redacted = text;
+  const sortedByPosDesc = [...allFindings].sort((a, b) => (b.start ?? 0) - (a.start ?? 0));
+  for (const f of sortedByPosDesc) {
+    if (f.start !== null && f.end !== null) {
+      const replacement = f.action === "redact"
+        ? "█".repeat(f.end - f.start)
+        : `[${f.entity_type}_REDACTED]`;
+      redacted = redacted.slice(0, f.start) + replacement + redacted.slice(f.end);
     }
   }
 
@@ -241,6 +539,7 @@ function mockAnalyzeText(text: string, preset: Preset): AnalyzeTextResponse {
     summary,
     findings_count: findingsCount,
     language: preset.language || "auto-detected",
+    findings: allFindings,
   };
 }
 
@@ -253,21 +552,41 @@ export async function analyzeText(
   preset: Preset,
   _modelPath?: string
 ): Promise<AnalyzeTextResponse> {
-  if (!isTauriAvailable() || !tauriInvoke) {
-    // Browser preview mode - use mock implementation
-    return mockAnalyzeText(text, preset);
+  await ensureInitialized();
+  // Desktop mode - use Tauri
+  if (isTauriAvailable() && tauriInvoke) {
+    return await tauriInvoke<AnalyzeTextResponse>("analyze_text", {
+      text,
+      preset,
+    });
   }
 
-  return await tauriInvoke<AnalyzeTextResponse>("analyze_text", {
-    text,
-    preset,
-  });
+  // Web mode - try Python backend first
+  if (webApiAvailable || (await checkWebApi())) {
+    try {
+      const response = await fetch(`${WEB_API_URL}/api/analyze`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, preset }),
+      });
+
+      if (response.ok) {
+        return await response.json();
+      }
+    } catch (error) {
+      console.warn("Web API call failed, falling back to mock:", error);
+    }
+  }
+
+  // Fallback to browser preview mock
+  return mockAnalyzeText(text, preset);
 }
 
 export async function analyzeFile(
   inputPath: string,
   preset: Preset
 ): Promise<AnalyzeFileResponse> {
+  await ensureInitialized();
   if (!isTauriAvailable() || !tauriInvoke) {
     throw new Error("File analysis requires the desktop app. Please run with 'npm run tauri dev'.");
   }
@@ -327,20 +646,101 @@ export function isDesktopApp(): boolean {
   return isTauriAvailable();
 }
 
+/**
+ * Invoke a Tauri backend command. Waits for initialization to complete so
+ * callers do not need to import @tauri-apps/api/core directly.
+ */
+export async function invokeBackend<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
+  await ensureInitialized();
+  if (!tauriInvoke) {
+    throw new Error(`Cannot invoke "${cmd}": Tauri is not available in this environment.`);
+  }
+  return tauriInvoke<T>(cmd, args);
+}
+
+export async function uninstallModel(modelType: string, modelId: string): Promise<{ status: string; model_id: string }> {
+  await ensureInitialized();
+  if (!isTauriAvailable() || !tauriInvoke) {
+    throw new Error("Model management requires the desktop app.");
+  }
+  return tauriInvoke<{ status: string; model_id: string }>("uninstall_model", {
+    modelType,
+    modelId,
+  });
+}
+
+export type DiskUsage = {
+  spacy_models_bytes: number;
+  hf_cache_bytes: number;
+  spacy_models_path: string;
+  hf_cache_path: string;
+};
+
+export async function getDiskUsage(): Promise<DiskUsage> {
+  await ensureInitialized();
+  if (!isTauriAvailable() || !tauriInvoke) {
+    return { spacy_models_bytes: 0, hf_cache_bytes: 0, spacy_models_path: "", hf_cache_path: "" };
+  }
+  return tauriInvoke<DiskUsage>("get_disk_usage");
+}
+
+export function isWebApiAvailable(): boolean {
+  return webApiAvailable;
+}
+
+export async function checkWebApiStatus(): Promise<boolean> {
+  return await checkWebApi();
+}
+
+export function getApiMode(): "desktop" | "web" | "preview" {
+  if (isTauriAvailable()) return "desktop";
+  if (webApiAvailable) return "web";
+  return "preview";
+}
+
+/**
+ * Open the desktop app's local web server (http://localhost:1422) in the
+ * system default browser. Only works in desktop (Tauri) mode.
+ */
+export async function openInBrowser(): Promise<void> {
+  await ensureInitialized();
+  if (isTauriAvailable()) {
+    await invokeBackend<void>("open_in_browser");
+  }
+}
+
 // ============================================================================
 // Supported Languages
 // ============================================================================
 
 export const SUPPORTED_LANGUAGES = [
   { code: "auto", name: "Auto-detect" },
-  { code: "en", name: "English" },
+  // EU official languages (alphabetical by English name)
+  { code: "bg", name: "Bulgarian (Български)" },
+  { code: "hr", name: "Croatian (Hrvatski)" },
+  { code: "cs", name: "Czech (Čeština)" },
+  { code: "da", name: "Danish (Dansk)" },
   { code: "nl", name: "Dutch (Nederlands)" },
-  { code: "de", name: "German (Deutsch)" },
+  { code: "en", name: "English" },
+  { code: "et", name: "Estonian (Eesti)" },
+  { code: "fi", name: "Finnish (Suomi)" },
   { code: "fr", name: "French (Français)" },
-  { code: "es", name: "Spanish (Español)" },
+  { code: "de", name: "German (Deutsch)" },
+  { code: "el", name: "Greek (Ελληνικά)" },
+  { code: "hu", name: "Hungarian (Magyar)" },
+  { code: "ga", name: "Irish (Gaeilge)" },
   { code: "it", name: "Italian (Italiano)" },
-  { code: "pt", name: "Portuguese (Português)" },
+  { code: "lv", name: "Latvian (Latviešu)" },
+  { code: "lt", name: "Lithuanian (Lietuvių)" },
+  { code: "mt", name: "Maltese (Malti)" },
   { code: "pl", name: "Polish (Polski)" },
+  { code: "pt", name: "Portuguese (Português)" },
+  { code: "ro", name: "Romanian (Română)" },
+  { code: "sk", name: "Slovak (Slovenčina)" },
+  { code: "sl", name: "Slovenian (Slovenščina)" },
+  { code: "es", name: "Spanish (Español)" },
+  { code: "sv", name: "Swedish (Svenska)" },
+  // Additional languages
   { code: "ru", name: "Russian (Русский)" },
   { code: "zh", name: "Chinese (中文)" },
   { code: "ja", name: "Japanese (日本語)" },

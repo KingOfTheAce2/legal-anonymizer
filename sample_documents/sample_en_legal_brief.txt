@@ -1,0 +1,229 @@
+IN THE UNITED STATES DISTRICT COURT
+FOR THE SOUTHERN DISTRICT OF NEW YORK
+
+Civil Action No. 1:2024-cv-07842
+
+HARRINGTON CAPITAL PARTNERS LLC,
+    Plaintiff,
+
+v.
+
+MERIDIAN GLOBAL TECHNOLOGIES INC.,
+RAYMOND SCOTT DELACROIX, and
+PATRICIA ANN WESTBROOK,
+    Defendants.
+
+PLAINTIFF'S AMENDED COMPLAINT AND DEMAND FOR JURY TRIAL
+
+Plaintiff Harrington Capital Partners LLC ("Harrington"), by and through its undersigned
+counsel, Wilson, Nakamura & Oduya LLP, 1221 Avenue of the Americas, Suite 4400, New York,
+NY 10020, hereby alleges as follows:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+I. INTRODUCTION AND PARTIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Plaintiff Harrington Capital Partners LLC is a Delaware limited liability company with its
+principal place of business at 845 Third Avenue, New York, NY 10022. Harrington's general
+counsel, Margaret Liu-Okonkwo, can be reached at m.liu-okonkwo@harringtoncap.com or by
+telephone at (212) 555-0173.
+
+2. Defendant Raymond Scott Delacroix is an individual residing at 47 Pemberton Road,
+Greenwich, Connecticut 06830. His Social Security Number is 452-78-9016. His date of birth is
+March 14, 1971. Delacroix may also be contacted via his personal email raymond.delacroix@gmail.com
+or his work email r.delacroix@meridiangt.com, and at mobile (203) 555-0284.
+
+3. Defendant Patricia Ann Westbrook is an individual residing at 2218 Sunset Boulevard,
+Los Angeles, California 90028. Her Social Security Number is 561-34-8027. Her date of birth is
+July 22, 1968. Westbrook's passport number is US B7842913 and her driver's license number is
+CA DL 9923741B. She may be reached at patricia.westbrook@meridiangt.com or (310) 555-0619.
+
+4. Defendant Meridian Global Technologies Inc. is incorporated in Delaware with its principal
+place of business at 3900 Freedom Circle, Suite 1100, Santa Clara, California 95054. Its federal
+Employer Identification Number (EIN) is 47-3892014. The company website is
+https://www.meridiangt.com and its IT systems are reachable at the IP address 198.51.100.42.
+The CTO's email is tech-support@meridiangt.com.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+II. FACTUAL BACKGROUND
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+5. On or about September 3, 2023, Harrington entered into a Securities Purchase Agreement
+with Meridian Global Technologies Inc., pursuant to which Harrington agreed to provide an
+investment of $47,500,000.00 (forty-seven million five hundred thousand dollars) in exchange for
+convertible notes.
+
+6. Harrington wire-transferred the initial tranche of $18,000,000.00 from its account at
+First National Bank, Routing Number 021000021, Account Number 4892736501, to Meridian's
+operating account at Pacific Premier Bank, Routing Number 122242843, Account Number 7813940265.
+The corresponding SWIFT/BIC code was PPBIUS66.
+
+7. A subsequent payment of €12,750,000.00 (twelve million seven hundred fifty thousand euros)
+was transferred via IBAN to Meridian's European subsidiary account: DE89370400440532013000
+(Deutsche Bank AG, Frankfurt am Main, Germany, BIC: DEUTDEDB).
+
+8. Additionally, Harrington paid a consulting retainer of £320,000 to an affiliated UK entity
+whose bank account IBAN was GB29NWBK60161331926819 (NatWest Bank, Sort Code 60-16-13).
+
+9. Raymond Scott Delacroix used corporate credit card number 4532015112830366 (Visa, expiry
+09/26, CVV 374) to charge $389,412 in personal expenses to the Meridian corporate account.
+He also used a secondary Mastercard ending in 5425233430109903 (expiry 11/25) for an additional
+$214,800 in unauthorized transactions.
+
+10. Delacroix maintained a personal bank account at Chase Bank with account number 839204751
+and routing number 021000021, to which he transferred misappropriated corporate funds totaling
+$1,204,500.00 between January 2023 and August 2023.
+
+11. Westbrook accessed Meridian's internal systems using her corporate credentials. Her
+username was pwestbrook and her employee ID was EMP-004927. Internal access logs from IP
+address 203.0.113.87 and 2001:0db8:85a3:0000:0000:8a2e:0370:7334 document 47 unauthorized
+access events between February 14, 2023 and May 31, 2023.
+
+12. Westbrook's personal vehicle — a 2021 BMW 530i bearing California license plate 8XKL492 —
+was photographed on surveillance footage entering the Meridian Santa Clara parking garage during
+off-hours on the dates identified in Exhibit C.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+III. WITNESS INFORMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+13. The following individuals have provided declarations or will be called as witnesses:
+
+    a. Dr. Evelyn Grace Huang, 119 Willow Creek Lane, Palo Alto, California 94301;
+       SSN 348-91-5670; email evelyn.huang@stanfordmed.edu; phone (650) 555-0391.
+       Dr. Huang is an expert in forensic accounting and will testify regarding the
+       financial irregularities identified in Meridian's books.
+
+    b. James Oliver Blackwood, 33 Queensbury Mews, London, SW7 4NE, United Kingdom;
+       UK National Insurance Number AB 12 34 56 C; passport GBR PA2847593;
+       email j.blackwood@blackwood-associates.co.uk; phone +44 20 7946 0312.
+       Mr. Blackwood is a director of the UK subsidiary and will testify regarding the
+       IBAN transfers described in paragraph 8.
+
+    c. Sunita Rao-Patel, 4820 Stonehaven Drive, Austin, Texas 78759;
+       SSN 671-23-4518; DOB November 8, 1985; email sunita.raopatel@harringtoncap.com;
+       phone (512) 555-0847. Ms. Rao-Patel is Harrington's investment analyst who
+       conducted due diligence prior to the September 3, 2023 transaction.
+
+    d. Henrik van der Berg, Prinsengracht 427, 1016 HN Amsterdam, Netherlands;
+       Dutch BSN 123456782; IBAN NL91ABNA0417164300; email h.vdberg@meridiangt.eu;
+       phone +31 6 12345678; passport NLD NQ1234567B.
+       Mr. van der Berg served as Meridian's European operations director.
+
+14. Additional records have been produced by former Meridian employee Thomas J. Calloway,
+whose address is 88 Harbor View Drive, Apt. 12B, San Francisco, California 94111. His SSN is
+792-45-3861 and his personal email is thomas.calloway@protonmail.com. Calloway's vehicle
+registration number is CA 7RXP231.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+IV. CAUSES OF ACTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COUNT I — FRAUD AND MISREPRESENTATION
+
+15. Plaintiff realleges and incorporates all preceding paragraphs.
+
+16. Defendants intentionally made material misrepresentations regarding Meridian's financial
+health, including falsified revenue figures totaling $94,200,000 in fiscal year 2022.
+
+17. Harrington, relying on these misrepresentations, transferred $47,500,000.00 as described
+above. As a direct result, Harrington has suffered damages of not less than $47,500,000.00, plus
+interest at the rate of 9% per annum from the date of breach.
+
+COUNT II — BREACH OF FIDUCIARY DUTY
+
+18. Delacroix and Westbrook, as officers of Meridian, owed fiduciary duties to Harrington as
+an investor. By diverting corporate funds and engaging in self-dealing transactions, they breached
+those duties, causing additional damages of approximately $1,604,212.00.
+
+COUNT III — COMPUTER FRAUD AND ABUSE ACT (18 U.S.C. § 1030)
+
+19. Westbrook's unauthorized access to Meridian's protected computer systems from IP address
+203.0.113.87 and IPv6 address 2001:0db8:85a3:0000:0000:8a2e:0370:7334 constitutes a violation
+of the Computer Fraud and Abuse Act.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+V. RELIEF REQUESTED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WHEREFORE, Plaintiff Harrington Capital Partners LLC respectfully requests that this Court
+enter judgment in its favor and against Defendants, awarding:
+
+    (a) Compensatory damages of not less than $49,104,212.00;
+    (b) Punitive damages;
+    (c) Pre- and post-judgment interest;
+    (d) Attorneys' fees and costs;
+    (e) Such other relief as the Court deems just and proper.
+
+Respectfully submitted,
+
+WILSON, NAKAMURA & ODUYA LLP
+
+By: _______________________________
+    Daniel Kwame Nakamura, Esq.
+    Bar No. NY 4829301
+    1221 Avenue of the Americas, Suite 4400
+    New York, NY 10020
+    Tel: (212) 555-0100
+    Fax: (212) 555-0199
+    Email: dkn@wno-law.com
+
+    Counsel for Plaintiff Harrington Capital Partners LLC
+
+Dated: February 14, 2024
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXHIBIT A — WIRE TRANSFER RECORDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Transaction 1:
+  Date: September 3, 2023
+  From: Harrington Capital Partners — FNB Account 4892736501
+  To:   Meridian Global Technologies — Pacific Premier Account 7813940265
+  Amount: $18,000,000.00 USD
+  Reference: SPA-TRANCHE-1
+
+Transaction 2:
+  Date: October 17, 2023
+  From: Harrington Capital — Wells Fargo IBAN-linked account
+  To:   Meridian Europe GmbH — IBAN DE89370400440532013000
+  Amount: €12,750,000.00 EUR
+
+Transaction 3:
+  Date: November 2, 2023
+  From: Harrington Capital — Barclays UK
+  To:   Meridian UK Ltd — IBAN GB29NWBK60161331926819
+  Amount: £320,000.00 GBP
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXHIBIT B — UNAUTHORIZED CREDIT CARD CHARGES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Card: Visa 4532015112830366
+Holder: RAYMOND S DELACROIX
+Exp: 09/26
+
+  Jan 15 2023  Four Seasons Hotel San Francisco     $12,840.00
+  Feb 22 2023  Private charter aviation (SFO→LAS)  $28,500.00
+  Mar 10 2023  Luxury vehicle rental                $4,320.00
+  Apr  4 2023  Personal art auction purchase        $181,000.00
+  May 19 2023  Jewelry boutique, Beverly Hills      $51,200.00
+  Jun 30 2023  Yacht charter, Marina del Rey        $111,552.00
+               ─────────────────────────────────────────────────
+               Total                                $389,412.00
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXHIBIT C — SERVER ACCESS LOG SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Source IP: 203.0.113.87
+Source IPv6: 2001:0db8:85a3:0000:0000:8a2e:0370:7334
+Account: pwestbrook (Employee ID EMP-004927)
+
+  2023-02-14 02:17:43  LOGIN  SUCCESS   /internal/finance/reports
+  2023-02-14 02:19:11  GET    SUCCESS   /internal/finance/Q4_2022_actual.xlsx
+  2023-03-03 01:44:22  LOGIN  SUCCESS   /internal/investor-data
+  2023-03-03 01:46:05  GET    SUCCESS   /internal/investor-data/harrington_cap.json
+  2023-05-31 23:58:01  DELETE ATTEMPTED /audit/logs/access_2023_q1.log
+
+END OF DOCUMENT

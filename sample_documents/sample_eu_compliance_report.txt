@@ -1,0 +1,235 @@
+GDPR ARTICLE 30 — RECORDS OF PROCESSING ACTIVITIES
+DATA AUDIT & INCIDENT INVESTIGATION REPORT
+
+Organisation:    Nexora Digital Services GmbH
+Report Reference: DPO-2024-AUDIT-037
+Prepared by:     Dr. Lena Margarethe Hofmann, Data Protection Officer
+Contact:         lena.hofmann@nexora-digital.de | +49 89 2100 5837
+Reviewed by:     Marc-Antoine Dubois (Legal Counsel), Ingrid Sjöström (CISO)
+Date:            15 März 2024
+Classification:  HIGHLY CONFIDENTIAL — RESTRICTED DISTRIBUTION
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. EXECUTIVE SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This report documents a data processing incident at Nexora Digital Services GmbH
+(Steuernummer: 143/152/08516; Umsatzsteuer-Identifikationsnummer: DE814204782), registered at
+Leopoldstraße 175, 80804 München, Germany. The incident involved the accidental exposure of
+personal data belonging to 847 natural persons across the European Union.
+
+The investigation was initiated following a report by internal whistleblower Stefan
+Wilhelm Brandt (Mitarbeiter-ID: NDS-EMP-02947), reachable at s.brandt@nexora-digital.de
+or on mobile +49 151 23456789.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. DATA SUBJECTS AFFECTED — GERMAN NATIONALS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+2.1 The following German data subjects were affected:
+
+Subject 001:
+  Name:           Friedrich Karl Ostermeier
+  Date of Birth:  08.04.1979
+  Address:        Beethovenstraße 22, 80336 München, Deutschland
+  Email:          f.ostermeier@privat.de
+  Phone:          +49 89 3471 2856
+  Steuer-ID:      47 265 872 190
+  Rentenversicherungsnummer: 65 040879 O 007
+  IBAN:           DE62500105170646489890
+  Passport:       DE PA1234567
+
+Subject 002:
+  Name:           Katharina Ingeborg Weber-Müller
+  Date of Birth:  17.11.1992
+  Address:        Goethestraße 14, 10623 Berlin, Deutschland
+  Email:          katharina.weber-mueller@techcorp.de
+  Phone:          030 8847 2910
+  Steuer-ID:      22 187 934 056
+  IBAN:           DE89370400440532013000
+  Passport:       DE PA9876543
+
+Subject 003:
+  Name:           Hans-Peter Lindenberg
+  Date of Birth:  03.07.1965
+  Address:        Schillerplatz 5, 70173 Stuttgart, Deutschland
+  Email:          hp.lindenberg@web.de
+  Mobile:         +49 172 987 6543
+  Steuer-ID:      29 384 721 650
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. DATA SUBJECTS AFFECTED — FRENCH NATIONALS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3.1 French data subjects whose records were exposed:
+
+Subject 004:
+  Name:           Jean-Pierre Étienne Moreau
+  Date of Birth:  23 juin 1981
+  Address:        47 Rue de la Paix, 75002 Paris, France
+  Email:          jp.moreau@laposte.net
+  Téléphone:      06 12 34 56 78
+  Numéro de Sécurité Sociale (NIR): 1 81 06 75 104 066 68
+  IBAN:           FR1420041010050500013M02606
+  Passport:       FRA 14AB92837
+
+Subject 005:
+  Name:           Marie-Claire Sophie Lefebvre
+  Date of Birth:  12 septembre 1975
+  Address:        12 Avenue des Champs-Élysées, 75008 Paris, France
+  Email:          marie.lefebvre@orange.fr
+  Téléphone:      01 44 87 23 90
+  NIR:            2 75 09 75 108 122 15
+  IBAN:           FR7630006000011234567890189
+  Numéro fiscal:  1 23 45 678 901 234
+
+Subject 006:
+  Name:           Antoine Christophe Garnier
+  Date of Birth:  30 mars 1988
+  Address:        8 Rue du Faubourg Saint-Antoine, 75011 Paris, France
+  Phone:          07 89 01 23 45
+  IBAN:           FR7610096000505013010020
+  Passport:       FRA 09XY12345
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. DATA SUBJECTS AFFECTED — DUTCH NATIONALS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Subject 007:
+  Name:           Pieter Johannes van den Broek
+  Date of Birth:  14-05-1983
+  Address:        Keizersgracht 123, 1017 DL Amsterdam, Nederland
+  Email:          p.vandenbroek@xs4all.nl
+  Telefoon:       020 420 8374
+  BSN:            123456782
+  IBAN:           NL91ABNA0417164300
+  Passport:       NLD NP9876543A
+
+Subject 008:
+  Name:           Anneliese Wilhelmina de Groot
+  Date of Birth:  29-02-1980
+  Address:        Herengracht 456, 1017 CC Amsterdam, Nederland
+  Email:          a.degroot@kpn.nl
+  Telefoon:       +31 6 23456789
+  BSN:            987654321
+  IBAN:           NL18RABO0123459876
+
+Subject 009:
+  Name:           Jeroen Martijn Visser
+  Date of Birth:  07-12-1990
+  Address:        Coolsingel 80, 3011 AD Rotterdam, Nederland
+  Email:          j.visser@bol.com
+  Mobile:         +31 6 98765432
+  BSN:            456789123
+  IBAN:           NL69INGB0123456789
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. DATA SUBJECTS AFFECTED — OTHER EU NATIONALS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Subject 010 — Spanish:
+  Name:           María Isabel Fernández García
+  Date of Birth:  19/08/1987
+  Address:        Calle Gran Vía 28, 28013 Madrid, España
+  Email:          maria.fernandez@gmail.com
+  Teléfono:       +34 91 234 5678 | 612 345 678
+  DNI/NIF:        48251673T
+  IBAN:           ES9121000418450200051332
+
+Subject 011 — Italian:
+  Name:           Marco Antonio Bianchi
+  Date of Birth:  05/03/1972
+  Address:        Via del Corso 18, 00186 Roma, Italia
+  Email:          m.bianchi@libero.it
+  Telefono:       +39 06 1234 5678 | 347 123 4567
+  Codice Fiscale: BNCMRC72C05H501X
+  IBAN:           IT60X0542811101000000123456
+
+Subject 012 — Swedish:
+  Name:           Erik Johan Lindström
+  Date of Birth:  1978-06-25
+  Address:        Drottninggatan 71A, 111 36 Stockholm, Sverige
+  Email:          erik.lindstrom@telia.com
+  Telefon:        +46 8 123 456 78 | 070-123 45 67
+  Personnummer:   780625-1234
+  IBAN:           SE4550000000058398257466
+
+Subject 013 — Polish:
+  Name:           Anna Maria Kowalska-Nowak
+  Data urodzenia: 11.03.1995
+  Address:        ul. Marszałkowska 140, 00-061 Warszawa, Polska
+  Email:          a.kowalska@wp.pl
+  Telefon:        +48 22 123 45 67 | 601 234 567
+  PESEL:          95031198765
+  IBAN:           PL61109010140000071219812874
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. TECHNICAL INCIDENT DETAILS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+6.1 The data breach originated from misconfigured server at IP address 198.51.100.17.
+    An S3-compatible object storage bucket was inadvertently set to public read access
+    on 2024-01-08 at 14:32:07 UTC. The exposed data remained publicly accessible until
+    2024-01-11 at 09:15:22 UTC (approximately 67 hours).
+
+6.2 The misconfiguration was introduced via a deployment script committed by
+    DevOps Engineer Oliver Schneider (username: oschneider, email: o.schneider@nexora-digital.de,
+    employee ID NDS-EMP-01203). The commit hash was a7f3c2e9b1d84560efba923174c8650d2f1e48a3.
+
+6.3 Exposure window: The following API endpoint was publicly accessible:
+    https://api.nexora-digital.de/v2/users/export?format=csv
+
+    During the exposure window, 3 distinct external IP addresses accessed the endpoint:
+      - 203.0.113.45 (Germany)
+      - 203.0.113.199 (Netherlands)
+      - 2001:0db8:0000:0042:0000:8a2e:0370:7334 (France)
+
+6.4 The API authentication token that was inadvertently embedded in the deployment
+    script was: ghp_x8Kp3mNqRTvL7yWzJcF2dBsHnU4oAeI9V1Yw
+    (This token has been revoked. Treat any occurrence of this string as sensitive.)
+
+    An AWS access key pair was also exposed:
+    Access Key ID:     AKIAIOSFODNN7EXAMPLE
+    Secret Access Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    (Both have been revoked.)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. SUPERVISORY AUTHORITY NOTIFICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+7.1 Notification was submitted to the Bayerisches Landesamt für Datenschutzaufsicht (BayLDA)
+    on 12 January 2024 at 08:47 CET, within the 72-hour mandatory reporting window.
+
+7.2 Contact at BayLDA:
+    Dienstgebäude Ansbach: Promenade 27, 91522 Ansbach, Germany
+    Telefon: +49 981 53-1300
+    Email: poststelle@lda.bayern.de
+
+7.3 Parallel notifications were made to:
+    - CNIL (France): 3 Place de Fontenoy, TSA 80715, 75334 Paris Cedex 07
+      Reference number CNIL-2024-01-019284
+    - Autoriteit Persoonsgegevens (Netherlands): Bezuidenhoutseweg 30, 2594 AV Den Haag
+      Reference number AP-2024-NL-00873
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. REMEDIATION AND RECOMMENDATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+8.1 Immediate actions taken:
+    - Storage bucket access revoked at 2024-01-11 09:15 UTC
+    - All exposed tokens and credentials rotated
+    - Affected data subjects notified by email and post (letters dated 15 January 2024)
+    - Forensic snapshot preserved at internal evidence IP: 10.0.8.42
+
+8.2 Data subject notification letters were sent to the addresses on record. Undeliverable
+    mail was returned for Subject 003 (Hans-Peter Lindenberg) at Schillerplatz 5, 70173
+    Stuttgart — updated address investigation is ongoing.
+
+Signed:
+Dr. Lena Margarethe Hofmann
+Data Protection Officer — Nexora Digital Services GmbH
+lena.hofmann@nexora-digital.de
++49 89 2100 5837
+München, 15. März 2024
+
+END OF REPORT

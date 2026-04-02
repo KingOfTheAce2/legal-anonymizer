@@ -15,10 +15,14 @@ from .report import (
     sha256_file,
 )
 from .docx_scrubber import scrub_docx
+from .pdf_scrubber import scrub_pdf
+from .layer1 import analyze_layer1_text
 
 
 SUPPORTED_EXTENSIONS = {
     ".docx": "docx",
+    ".pdf": "pdf",
+    ".txt": "txt",
 }
 
 
@@ -99,13 +103,12 @@ def run_batch_folder(
         file_id = _next_file_id(idx)
         original_filename = _safe_basename(in_path)
 
-        out_name = original_filename
-        if out_name.lower().endswith(".docx"):
-            out_name = out_name[:-5] + "_redacted.docx"
-        else:
-            out_name = out_name + "_redacted"
-
+        base, ext_lower = os.path.splitext(original_filename)
+        out_name = base + "_redacted" + ext_lower
         out_path = os.path.join(output_folder, out_name)
+
+        file_findings: List[Finding] = []
+        file_summary: Dict[str, int] = {}
 
         if kind == "docx":
             file_findings, file_summary = scrub_docx(
@@ -115,18 +118,37 @@ def run_batch_folder(
                 language=language,
                 file_id=file_id,
             )
-
-            # Ensure no path leakage
+        elif kind == "pdf":
+            file_findings, file_summary = scrub_pdf(
+                input_path=in_path,
+                output_path=out_path,
+                preset=preset,
+                language=language,
+                file_id=file_id,
+            )
+        elif kind == "txt":
+            with open(in_path, "r", encoding="utf-8", errors="replace") as fh:
+                raw_text = fh.read()
+            redacted_text, file_findings, file_summary = analyze_layer1_text(
+                raw_text, preset, language
+            )
+            with open(out_path, "w", encoding="utf-8") as fh:
+                fh.write(redacted_text)
             for f in file_findings:
                 f.file_id = file_id
                 f.original_filename = original_filename
 
-            findings_all.extend(file_findings)
+        # Ensure no path leakage
+        for f in file_findings:
+            f.file_id = file_id
+            f.original_filename = original_filename
 
-            for k, v in file_summary.items():
-                summary[k] = summary.get(k, 0) + int(v)
+        findings_all.extend(file_findings)
 
-            processed += 1
+        for k, v in file_summary.items():
+            summary[k] = summary.get(k, 0) + int(v)
+
+        processed += 1
 
     # Artifacts
     write_json(os.path.join(run_folder, "preset_used.json"), asdict(preset))

@@ -11,6 +11,7 @@ Purpose:
 Supports:
 - DOCX (Word documents)
 - PDF (Portable Document Format)
+- PPTX (PowerPoint presentations)
 - TXT (Plain text)
 
 This module is intentionally layer-agnostic.
@@ -214,7 +215,7 @@ def _make_txt_handler():
     ) -> Tuple[List[Finding], Dict[str, int]]:
         from .layer1 import analyze_layer1_text
 
-        with open(input_path, "r", encoding="utf-8") as f:
+        with open(input_path, "r", encoding="utf-8", errors="replace") as f:
             text = f.read()
 
         redacted, findings, summary = analyze_layer1_text(text, preset, language)
@@ -232,16 +233,31 @@ def _make_txt_handler():
     return handler
 
 
+def _make_pptx_handler():
+    """Create PPTX handler."""
+    def handler(
+        input_path: str,
+        output_path: str,
+        preset: Preset,
+        language: str,
+        file_id: str,
+    ) -> Tuple[List[Finding], Dict[str, int]]:
+        from .pptx_scrubber import scrub_pptx
+        return scrub_pptx(input_path, output_path, preset, language, file_id)
+    return handler
+
+
 def create_default_dispatcher() -> FileDispatcher:
     """
     Create a dispatcher with all built-in handlers registered.
 
     Returns:
-        FileDispatcher with handlers for .docx, .pdf, .txt
+        FileDispatcher with handlers for .docx, .pdf, .pptx, .txt
     """
     dispatcher = FileDispatcher()
     dispatcher.register(".docx", _make_docx_handler())
     dispatcher.register(".pdf", _make_pdf_handler())
+    dispatcher.register(".pptx", _make_pptx_handler())
     dispatcher.register(".txt", _make_txt_handler())
     return dispatcher
 

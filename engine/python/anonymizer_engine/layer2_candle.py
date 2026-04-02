@@ -18,27 +18,7 @@ from .preset import Preset
 from .findings import Finding
 from .pseudonym import PseudonymMapper
 from .patterns import detect_with_validation, PatternMatch
-
-PRIORITY: Dict[str, int] = {
-    "NATIONAL_ID": 100,
-    "PASSPORT_NUMBER": 100,
-    "MEDICAL_ID": 100,
-    "BANK_ACCOUNT": 90,
-    "CREDIT_CARD": 90,
-    "PERSON": 80,
-    "DATE_OF_BIRTH": 80,
-    "EMAIL": 80,
-    "PHONE_NUMBER": 80,
-    "VEHICLE_ID": 80,
-    "ADDRESS": 70,
-    "IP_ADDRESS": 70,
-    "ORGANIZATION": 60,
-    "LOCATION": 60,
-    "ACCOUNT_USERNAME": 60,
-    "DATE": 40,
-    "MONEY": 30,
-    "URL": 20,
-}
+from .shared import PRIORITY, get_context, mask_value, log_detection_warning, log_detection_error
 
 # Model cache
 _MODEL_CACHE: Dict[str, Any] = {}
@@ -67,8 +47,8 @@ def _load_model(model_path: str):
     try:
         from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
 
-        tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=False)
-        model = AutoModelForTokenClassification.from_pretrained(model_path, local_files_only=False)
+        tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
+        model = AutoModelForTokenClassification.from_pretrained(model_path, local_files_only=True)
 
         ner_pipeline = pipeline(
             "ner",
@@ -81,9 +61,27 @@ def _load_model(model_path: str):
         _TOKENIZER_CACHE[model_path] = tokenizer
 
         return ner_pipeline, tokenizer
-    except ImportError:
+    except ImportError as e:
+        log_detection_warning(
+            "Layer 2",
+            "Transformers library not installed. Layer 2 will use pattern matching only. "
+            "For AI-powered detection, install: pip install transformers torch",
+            e
+        )
         return None, None
-    except Exception:
+    except OSError as e:
+        log_detection_error(
+            "Layer 2",
+            f"Could not download model '{model_path}'. Check your internet connection or use offline mode.",
+            e
+        )
+        return None, None
+    except Exception as e:
+        log_detection_error(
+            "Layer 2",
+            f"Error loading transformer model '{model_path}'",
+            e
+        )
         return None, None
 
 
@@ -108,18 +106,6 @@ def _map_ner_label(label: str) -> Optional[str]:
     }
 
     return mapping.get(label)
-
-
-def _context(text: str, start: int, end: int, span: int = 30) -> str:
-    a = max(0, start - span)
-    b = min(len(text), end + span)
-    return text[a:b]
-
-
-def _mask(value: str) -> str:
-    if len(value) <= 4:
-        return "*" * len(value)
-    return value[:2] + ("*" * (len(value) - 4)) + value[-2:]
 
 
 def _detect_patterns(text: str) -> List[Tuple[int, int, str, str, int]]:
@@ -179,9 +165,18 @@ def analyze_layer2_text(
                     continue
 
                 candidates.append((start, end, entity_type, text[start:end], confidence))
-        except Exception:
-            # Fallback: transformer failed, continue with patterns only
-            pass
+        except MemoryError as e:
+            log_detection_error(
+                "Layer 2",
+                "Document too large for transformer processing. Consider using Layer 1 for large documents.",
+                e
+            )
+        except Exception as e:
+            log_detection_warning(
+                "Layer 2",
+                "Transformer detection failed, continuing with pattern matching only",
+                e
+            )
 
     # Apply actions to candidates
     return apply_layer2_actions(
@@ -213,7 +208,7 @@ def apply_layer2_actions(
     - Priority 70: redact
     - Priority 60+: configurable
     """
-    pseudonyms = PseudonymMapper()
+    pseudonyms = PseudonymMapper(style=getattr(preset, "pseudonym_style", "neutral"))
     findings: List[Finding] = []
     summary: Dict[str, int] = {}
 
@@ -234,11 +229,31 @@ def apply_layer2_actions(
     # Sort by position for replacement
     filtered.sort(key=lambda x: x[0])
 
+    # Build whitelist / blacklist lookup sets (case-insensitive)
+    global_whitelist = {w.lower() for w in (preset.whitelist or [])}
+    lang_whitelist = {w.lower() for w in preset.language_whitelists.get(language, [])}
+    all_whitelist = global_whitelist | lang_whitelist
+
+    global_blacklist = {w.lower() for w in (preset.blacklist or [])}
+    lang_blacklist = {w.lower() for w in preset.language_blacklists.get(language, [])}
+    all_blacklist = global_blacklist | lang_blacklist
+
     # Build output with replacements (reverse order to preserve positions)
     out = text
     offset = 0
 
     for start, end, et, val, confidence in filtered:
+        val_lower = val.lower()
+
+        # Whitelisted terms are false positives — skip entirely
+        if val_lower in all_whitelist:
+            continue
+
+        # Blacklisted terms are always flagged at maximum confidence
+        is_blacklisted = val_lower in all_blacklist
+        if is_blacklisted:
+            confidence = max(confidence, 95)
+
         if not preset.entities_enabled.get(et, True):
             continue
 
@@ -273,9 +288,9 @@ def apply_layer2_actions(
         pseudonym_value = ""
 
         if action == "redact":
-            replacement = "█" * len(val)
+            replacement = f"[{et}]"
         elif action == "mask":
-            replacement = _mask(val)
+            replacement = mask_value(val)
         elif action == "pseudonymise":
             token = pseudonyms.pseudonymise(et, val)
             replacement = token
@@ -289,7 +304,7 @@ def apply_layer2_actions(
                 entity_type=et,
                 entity_priority=priority,
                 detected_text=val,
-                context_snippet=_context(text, start, end),
+                context_snippet=get_context(text, start, end),
                 detection_source="transformer" if "bert" in model_id.lower() or "transformer" in model_id.lower() else "pattern",
                 model_id=model_id,
                 confidence_score=confidence,
@@ -299,8 +314,10 @@ def apply_layer2_actions(
                 pseudonym_value=pseudonym_value,
                 escalation_applied=False,
                 whitelist_match=False,
-                blacklist_match=False,
+                blacklist_match=is_blacklisted,
                 language=language,
+                start_pos=start,
+                end_pos=end,
             )
         )
 
@@ -314,9 +331,9 @@ def apply_layer2_actions(
         start, end = int(parts[0]), int(parts[1])
 
         if finding.redaction_action == "redact":
-            replacement = "█" * (end - start)
+            replacement = f"[{finding.entity_type}]"
         elif finding.redaction_action == "mask":
-            replacement = _mask(out[start:end])
+            replacement = mask_value(out[start:end])
         elif finding.redaction_action == "pseudonymise":
             replacement = finding.pseudonym_value
         else:

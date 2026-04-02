@@ -81,15 +81,32 @@ class ModelManager:
 
         req = urllib.request.Request(url, headers=headers)
         try:
-            with urllib.request.urlopen(req) as resp, open(tmp, "wb") as out:
+            with urllib.request.urlopen(req, timeout=300) as resp, open(tmp, "wb") as out:
                 shutil.copyfileobj(resp, out)
+        except urllib.request.URLError as e:
+            self._cleanup_partial(tmp)
+            return {
+                "ok": False,
+                "reason": "download_failed",
+                "error": f"Could not connect to download server. Check your internet connection. ({e.reason})",
+                "url": url
+            }
+        except TimeoutError:
+            self._cleanup_partial(tmp)
+            return {
+                "ok": False,
+                "reason": "download_failed",
+                "error": "Download timed out. The model file may be too large or your connection is slow.",
+                "url": url
+            }
         except Exception as e:
-            try:
-                if os.path.exists(tmp):
-                    os.remove(tmp)
-            except Exception:
-                pass
-            return {"ok": False, "reason": "download_failed", "error": str(e), "url": url}
+            self._cleanup_partial(tmp)
+            return {
+                "ok": False,
+                "reason": "download_failed",
+                "error": f"Download failed: {type(e).__name__}: {e}",
+                "url": url
+            }
 
         os.replace(tmp, dest)
 
@@ -98,6 +115,14 @@ class ModelManager:
             return {"ok": False, "reason": "verification_failed", "path": dest, **ver}
 
         return {"ok": True, "status": "downloaded", "path": dest, **ver}
+
+    def _cleanup_partial(self, path: str) -> None:
+        """Clean up partial download file."""
+        try:
+            if os.path.exists(path):
+                os.remove(path)
+        except OSError:
+            pass
 
     def write_model_inventory(self, inventory_path: str, inventory: Dict) -> None:
         os.makedirs(os.path.dirname(inventory_path), exist_ok=True)

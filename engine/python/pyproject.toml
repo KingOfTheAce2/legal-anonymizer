@@ -3,7 +3,7 @@ name = "anonymizer-engine"
 version = "0.1.0"
 description = "Offline-first legal anonymization engine for GDPR-compliant text and document scrubbing"
 requires-python = ">=3.10"
-license = {text = "MIT"}
+license = {text = "Elastic-2.0"}
 authors = [
     {name = "Legal Anonymizer Team"}
 ]
@@ -11,7 +11,7 @@ keywords = ["anonymization", "gdpr", "privacy", "legal", "nlp", "ner"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Legal Industry",
-    "License :: OSI Approved :: MIT License",
+    "License :: Other/Proprietary License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -55,6 +55,11 @@ docx = [
     "python-docx>=1.1.0",
 ]
 
+# PPTX support
+pptx = [
+    "python-pptx>=0.6.23",
+]
+
 # All features
 all = [
     "spacy>=3.7.0",
@@ -64,14 +69,18 @@ all = [
     "presidio-anonymizer>=2.2.0",
     "PyMuPDF>=1.23.0",
     "python-docx>=1.1.0",
+    "python-pptx>=0.6.23",
 ]
 
 # Development dependencies
 dev = [
     "pytest>=7.4.0",
     "pytest-cov>=4.1.0",
+    "pytest-benchmark>=4.0.0",
     "ruff>=0.1.0",
     "mypy>=1.7.0",
+    "bandit[toml]>=1.7.5",
+    "pre-commit>=3.5.0",
 ]
 
 [project.scripts]
@@ -102,4 +111,13 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-addopts = "-v --cov=anonymizer_engine"
+addopts = "-v --cov=anonymizer_engine --cov-report=term-missing --cov-report=html"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "benchmark: marks tests as benchmarks",
+    "integration: marks tests as integration tests",
+]
+
+[tool.bandit]
+exclude_dirs = ["tests", "venv", ".venv"]
+skips = ["B101"]  # Allow assert statements in tests

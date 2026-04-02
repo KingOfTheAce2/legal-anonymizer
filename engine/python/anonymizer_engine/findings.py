@@ -23,6 +23,9 @@ class Finding:
     blacklist_match: bool
     language: str
     notes: str = ""
+    # Character positions for highlight feature
+    start_pos: Optional[int] = None
+    end_pos: Optional[int] = None
 
 
 FINDINGS_CSV_HEADER: List[str] = [

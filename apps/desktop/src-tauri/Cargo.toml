@@ -1,8 +1,8 @@
 [package]
-name = "legal-anonymizer"
+name = "redactly-legal"
 version = "0.1.0"
 edition = "2021"
-description = "Legal Anonymizer Desktop Application"
+description = "Redactly Legal Desktop Application"
 license = "MIT"
 
 [dependencies]
@@ -10,9 +10,8 @@ tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-uuid = { version = "1.8", features = ["v4"] }
 thiserror = "1.0"
-chrono = { version = "0.4", features = ["serde"] }
+tokio = { version = "1", features = ["process", "io-util"] }
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }

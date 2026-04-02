@@ -1,37 +1,15 @@
 import json
 import os
 import sys
-from typing import Any, Dict
 
-from anonymizer_engine.preset import Preset
 from anonymizer_engine.batch import run_batch_folder
-
-
-def _read_stdin_json() -> Dict[str, Any]:
-    raw = sys.stdin.buffer.read()
-    if not raw:
-        return {}
-    return json.loads(raw.decode("utf-8"))
-
-
-def _parse_preset(d: Dict[str, Any]) -> Preset:
-    return Preset(
-        preset_id=d["preset_id"],
-        name=d["name"],
-        layer=int(d["layer"]),
-        minimum_confidence=int(d["minimum_confidence"]),
-        uncertainty_policy=d["uncertainty_policy"],
-        pseudonym_style=d["pseudonym_style"],
-        language_mode=d["language_mode"],
-        language=d.get("language"),
-        entities_enabled=d["entities_enabled"],
-    )
+from common import read_stdin_json, parse_preset
 
 
 def main() -> None:
-    payload = _read_stdin_json()
+    payload = read_stdin_json()
 
-    preset = _parse_preset(payload["preset"])
+    preset = parse_preset(payload)
     input_folder = payload["input_folder"]
 
     # Where runs are stored (same convention as your other entrypoint)

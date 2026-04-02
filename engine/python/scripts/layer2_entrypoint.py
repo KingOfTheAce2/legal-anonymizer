@@ -1,9 +1,7 @@
 import json
 import os
 import sys
-from typing import Any, Dict
 
-from anonymizer_engine.preset import Preset
 from anonymizer_engine.model_manager import ModelManager, ModelRef
 from anonymizer_engine.layer2_candle import CandleModelConfig, analyze_layer2_text
 from anonymizer_engine.report import (
@@ -16,30 +14,12 @@ from anonymizer_engine.report import (
     sha256_text,
     preset_to_json,
 )
-
-
-def _read_json() -> Dict[str, Any]:
-    raw = sys.stdin.buffer.read()
-    return json.loads(raw.decode("utf-8")) if raw else {}
-
-
-def _parse_preset(d: Dict[str, Any]) -> Preset:
-    return Preset(
-        preset_id=d["preset_id"],
-        name=d["name"],
-        layer=int(d["layer"]),
-        minimum_confidence=int(d["minimum_confidence"]),
-        uncertainty_policy=d["uncertainty_policy"],
-        pseudonym_style=d["pseudonym_style"],
-        language_mode=d["language_mode"],
-        language=d.get("language"),
-        entities_enabled=d["entities_enabled"],
-    )
+from common import read_stdin_json, parse_preset
 
 
 def main() -> None:
-    payload = _read_json()
-    preset = _parse_preset(payload["preset"])
+    payload = read_stdin_json()
+    preset = parse_preset(payload)
     text = payload["text"]
 
     runs_base = payload.get("runs_base")
@@ -53,7 +33,9 @@ def main() -> None:
     language = payload.get("language") or (preset.language if preset.language_mode == "fixed" else "en")
 
     candle_cfg = payload.get("candle_model") or {}
-    model_id = candle_cfg.get("model_id", "your-hf-repo-id")
+    model_id = candle_cfg.get("model_id")
+    if not model_id:
+        raise ValueError("candle_model.model_id is required but was not provided")
     filename = candle_cfg.get("filename", "model.safetensors")
     expected_sha = candle_cfg.get("sha256")
 
@@ -97,7 +79,6 @@ def main() -> None:
         "run_folder": run_folder,
         "summary": summary,
         "language": language,
-        "model_path": model_path
     }, ensure_ascii=False))
 
 

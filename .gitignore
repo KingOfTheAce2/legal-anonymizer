@@ -2,6 +2,12 @@
 .claude/
 tmpclaude-*-cwd
 
+# Claude Flow
+.claude-flow/
+.swarm/
+CLAUDE.md
+.mcp.json
+
 # Python
 __pycache__/
 *.py[cod]
@@ -33,7 +39,6 @@ env/
 
 # Rust
 target/
-Cargo.lock
 
 # Node/TypeScript
 node_modules/
@@ -46,6 +51,10 @@ dist/
 
 # Tauri
 apps/desktop/src-tauri/target/
+apps/desktop/src-tauri/gen/
+
+# Pre-built sidecar binaries (built by CI, not committed)
+apps/desktop/src-tauri/binaries/anonymizer_engine-*
 
 # IDE
 .idea/
@@ -59,6 +68,7 @@ apps/desktop/src-tauri/target/
 output/
 runs/
 RUN_*/
+*_redacted.*
 
 # Models (large files)
 models/
@@ -70,6 +80,19 @@ models/
 .env
 .env.local
 .env.*.local
+
+# Database artifacts
+vectors.db
+*.db
+
+# PyInstaller build artifacts
+engine/python/dist*/
+engine/python/build_work*/
+
+# Test coverage
+.coverage
+.coveragerc
+coverage.json
 
 # Logs
 *.log

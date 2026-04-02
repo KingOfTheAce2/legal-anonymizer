@@ -1,5 +1,7 @@
 name: Build Release
 
+# Triggered by a version tag (e.g. git tag v1.0.0 && git push --tags)
+# or manually via the GitHub Actions UI.
 on:
   push:
     tags:
@@ -7,173 +9,255 @@ on:
   workflow_dispatch:
     inputs:
       layer:
-        description: 'Which layers to bundle'
+        description: 'Detection layers to bundle'
         required: true
         default: 'layer1'
         type: choice
         options:
           - layer1
-          - layer1-layer2
+          - layer1-layer3
           - all
 
+# ─────────────────────────────────────────────────────────────────
+# JOB 1 — Build the Python sidecar with PyInstaller on each platform
+# ─────────────────────────────────────────────────────────────────
 jobs:
-  build-python-sidecar:
-    name: Build Python Sidecar (${{ matrix.os }})
+  build-sidecar:
+    name: Python sidecar (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: windows-latest
-            artifact: anonymizer_engine.exe
-            target: windows
-          - os: macos-latest
-            artifact: anonymizer_engine
-            target: macos
+            triple: x86_64-pc-windows-msvc
+            artifact_src: anonymizer_engine.exe
+            artifact_dst: anonymizer_engine-x86_64-pc-windows-msvc.exe
+
+          - os: macos-13          # Intel runner
+            triple: x86_64-apple-darwin
+            artifact_src: anonymizer_engine
+            artifact_dst: anonymizer_engine-x86_64-apple-darwin
+
+          - os: macos-latest      # ARM (M1/M2) runner
+            triple: aarch64-apple-darwin
+            artifact_src: anonymizer_engine
+            artifact_dst: anonymizer_engine-aarch64-apple-darwin
+
           - os: ubuntu-latest
-            artifact: anonymizer_engine
-            target: linux
+            triple: x86_64-unknown-linux-gnu
+            artifact_src: anonymizer_engine
+            artifact_dst: anonymizer_engine-x86_64-unknown-linux-gnu
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
-      - name: Install Python dependencies
+      - name: Install engine + PyInstaller
         run: |
           cd engine/python
-          pip install -e .
+          pip install -e ".[layer1,layer2,layer3,pdf,docx,pptx]"
           pip install pyinstaller
-
-      - name: Install Presidio
-        run: |
-          pip install presidio-analyzer presidio-anonymizer
 
       - name: Download spaCy models
         run: |
           python -m spacy download en_core_web_sm
-          python -m spacy download nl_core_news_sm
-          python -m spacy download de_core_news_sm
-          python -m spacy download fr_core_news_sm
           python -m spacy download en_core_web_lg
 
-      - name: Build standalone executable
+      - name: Build standalone sidecar executable
         run: |
           cd engine/python
-          python build_standalone.py --layer1 --layer3 --name anonymizer_engine
+          python -m PyInstaller anonymizer_engine.spec --noconfirm
+
+      - name: Rename to Tauri triple format
+        shell: bash
+        run: |
+          src="engine/python/dist/${{ matrix.artifact_src }}"
+          dst="engine/python/dist/${{ matrix.artifact_dst }}"
+          mv "$src" "$dst"
+          echo "Sidecar: $dst ($(du -sh "$dst" | cut -f1))"
 
       - name: Upload sidecar artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sidecar-${{ matrix.target }}
-          path: engine/python/dist/${{ matrix.artifact }}
+          name: sidecar-${{ matrix.triple }}
+          path: engine/python/dist/${{ matrix.artifact_dst }}
+          if-no-files-found: error
+          retention-days: 1
 
-  build-desktop-app:
-    name: Build Desktop App (${{ matrix.os }})
-    needs: build-python-sidecar
+# ─────────────────────────────────────────────────────────────────
+# JOB 2 — Bundle sidecar into Tauri installer on each platform
+# ─────────────────────────────────────────────────────────────────
+  build-installer:
+    name: Installer (${{ matrix.os }})
+    needs: build-sidecar
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: windows-latest
-            target: windows
-            ext: .msi
+            triple: x86_64-pc-windows-msvc
+            rust_target: x86_64-pc-windows-msvc
+            label: windows
+
+          - os: macos-13
+            triple: x86_64-apple-darwin
+            rust_target: x86_64-apple-darwin
+            label: macos-intel
+
           - os: macos-latest
-            target: macos
-            ext: .dmg
+            triple: aarch64-apple-darwin
+            rust_target: aarch64-apple-darwin
+            label: macos-arm
+
           - os: ubuntu-latest
-            target: linux
-            ext: .AppImage
+            triple: x86_64-unknown-linux-gnu
+            rust_target: x86_64-unknown-linux-gnu
+            label: linux
 
     steps:
       - uses: actions/checkout@v4
 
+      # ── Drop the pre-built sidecar into the Tauri binaries folder ──
       - name: Download sidecar
         uses: actions/download-artifact@v4
         with:
-          name: sidecar-${{ matrix.target }}
+          name: sidecar-${{ matrix.triple }}
           path: apps/desktop/src-tauri/binaries/
 
-      - name: Make sidecar executable (Unix)
-        if: matrix.os != 'windows-latest'
-        run: chmod +x apps/desktop/src-tauri/binaries/anonymizer_engine
+      - name: Make sidecar executable (macOS / Linux)
+        if: runner.os != 'Windows'
+        run: chmod +x apps/desktop/src-tauri/binaries/anonymizer_engine-${{ matrix.triple }}
 
-      - name: Setup Node.js
+      # ── Node / npm ──
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/desktop/package-lock.json
 
+      # ── Rust ──
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_target }}
 
-      - name: Install dependencies (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+
+      # ── Linux system deps ──
+      - name: Install Linux system dependencies
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev
+          sudo apt-get install -y \
+            libgtk-3-dev \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
 
-      - name: Install Node dependencies
+      # ── Build ──
+      - name: Install npm dependencies
         run: |
           cd apps/desktop
-          npm install
+          npm ci
 
       - name: Build Tauri app
         run: |
           cd apps/desktop
-          npm run tauri build
+          npm run tauri build -- --target ${{ matrix.rust_target }}
 
-      - name: Upload installer
+      # ── Collect installer files ──
+      - name: Collect installer artifacts
+        shell: bash
+        run: |
+          mkdir -p dist-release
+          BUNDLE="apps/desktop/src-tauri/target/${{ matrix.rust_target }}/release/bundle"
+          # Windows
+          find "$BUNDLE/msi"   -name "*.msi"      -exec cp {} dist-release/ \; 2>/dev/null || true
+          find "$BUNDLE/nsis"  -name "*.exe"      -exec cp {} dist-release/ \; 2>/dev/null || true
+          # macOS
+          find "$BUNDLE/dmg"   -name "*.dmg"      -exec cp {} dist-release/ \; 2>/dev/null || true
+          # Linux
+          find "$BUNDLE/deb"   -name "*.deb"      -exec cp {} dist-release/ \; 2>/dev/null || true
+          find "$BUNDLE/appimage" -name "*.AppImage" -exec cp {} dist-release/ \; 2>/dev/null || true
+          find "$BUNDLE/rpm"   -name "*.rpm"      -exec cp {} dist-release/ \; 2>/dev/null || true
+          echo "Collected:" && ls -lh dist-release/
+
+      - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
-          name: legal-anonymizer-${{ matrix.target }}
-          path: |
-            apps/desktop/src-tauri/target/release/bundle/**/*${{ matrix.ext }}
-            apps/desktop/src-tauri/target/release/bundle/**/*.exe
+          name: installer-${{ matrix.label }}
+          path: dist-release/*
+          if-no-files-found: error
 
-  create-release:
-    name: Create GitHub Release
-    needs: build-desktop-app
+# ─────────────────────────────────────────────────────────────────
+# JOB 3 — Publish GitHub Release (only when triggered by a tag)
+# ─────────────────────────────────────────────────────────────────
+  publish-release:
+    name: Publish GitHub Release
+    needs: build-installer
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
 
     steps:
-      - name: Download all artifacts
+      - name: Download all installer artifacts
         uses: actions/download-artifact@v4
         with:
+          pattern: installer-*
           path: artifacts/
+          merge-multiple: true
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
+      - name: List release files
+        run: ls -lh artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          files: |
-            artifacts/legal-anonymizer-windows/**/*
-            artifacts/legal-anonymizer-macos/**/*
-            artifacts/legal-anonymizer-linux/**/*
-          body: |
-            ## Legal Anonymizer ${{ github.ref_name }}
-
-            **One-click install - No Python required!**
-
-            This release bundles everything needed:
-            - spaCy with language models (EN, NL, DE, FR)
-            - All PII detection patterns
-            - Desktop app for Windows, macOS, and Linux
-
-            ### Download
-
-            | Platform | Download |
-            |----------|----------|
-            | Windows | `.msi` installer |
-            | macOS | `.dmg` disk image |
-            | Linux | `.AppImage` |
-
-            ### Quick Start
-            1. Download the installer for your platform
-            2. Install and run
-            3. Paste text or select files to anonymize
-            4. No internet connection required!
-
+          files: artifacts/*
           draft: false
           prerelease: false
+          generate_release_notes: true
+          body: |
+            ## Redactly Legal ${{ github.ref_name }}
+
+            **One-click install — no Python, no dependencies.**
+
+            | Platform | File | Notes |
+            |----------|------|-------|
+            | Windows  | `.msi` installer | Recommended |
+            | Windows  | `-setup.exe` | Alternative NSIS installer |
+            | macOS Intel | `.dmg` | For Intel Macs |
+            | macOS Apple Silicon | `.dmg` | For M1/M2/M3 Macs |
+            | Linux (Debian/Ubuntu) | `.deb` | |
+            | Linux (any) | `.AppImage` | Portable, no install needed |
+
+            ### Installation
+
+            **Windows:** Download the `.msi`, double-click, follow the 3-step wizard.
+            Launch from the Start Menu. No internet connection required after install.
+
+            **macOS:** Download the `.dmg`, open it, drag the app to Applications.
+            You may need to right-click → Open the first time (Gatekeeper warning).
+
+            **Linux:** `.deb` → `sudo dpkg -i redactly-legal*.deb`
+            `.AppImage` → `chmod +x *.AppImage && ./Redactly*.AppImage`
+
+            ### System Requirements
+            - Windows 10 / 11 (64-bit)
+            - macOS 11 Big Sur or later
+            - Ubuntu 20.04 / Debian 11 or equivalent
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
