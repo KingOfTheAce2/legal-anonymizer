@@ -10,7 +10,6 @@ Critical tests for PII pattern matching with focus on:
 """
 
 import pytest
-from typing import List
 
 from anonymizer_engine.patterns import (
     detect_patterns,

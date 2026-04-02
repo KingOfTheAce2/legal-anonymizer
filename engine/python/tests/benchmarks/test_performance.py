@@ -10,7 +10,6 @@ Tests:
 
 import pytest
 import time
-from typing import List
 
 from anonymizer_engine.layer1 import analyze_layer1_text
 from anonymizer_engine.patterns import detect_patterns, detect_with_validation

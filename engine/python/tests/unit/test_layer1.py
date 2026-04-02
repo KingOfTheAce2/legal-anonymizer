@@ -10,7 +10,6 @@ Tests for:
 """
 
 import pytest
-from typing import List
 
 from anonymizer_engine.layer1 import analyze_layer1_text
 from anonymizer_engine.preset import Preset

@@ -103,6 +103,13 @@ target-version = "py310"
 select = ["E", "F", "W"]
 ignore = ["E501"]  # Line length handled by formatter
 
+[tool.ruff.lint.per-file-ignores]
+# __init__.py files intentionally re-export symbols; F401 fires on those
+"**/__init__.py" = ["F401"]
+# Test files and scripts may import symbols used only via fixtures or indirectly
+"tests/**/*.py" = ["F401"]
+"scripts/*.py" = ["F401"]
+
 [tool.mypy]
 python_version = "3.10"
 warn_return_any = true

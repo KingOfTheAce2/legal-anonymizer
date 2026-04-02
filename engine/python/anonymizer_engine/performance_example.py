@@ -9,7 +9,6 @@ Demonstrates:
 """
 
 import time
-from typing import List
 
 from .cache import get_cache_stats, clear_all_caches
 from .patterns import (
