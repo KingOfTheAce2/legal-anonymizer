@@ -184,6 +184,9 @@ jobs:
           npm ci
 
       - name: Build Tauri app
+        env:
+          # Ad-hoc signing so macOS DMG builds without an Apple Developer certificate
+          APPLE_SIGNING_IDENTITY: "-"
         run: |
           cd apps/desktop
           npm run tauri build -- --target ${{ matrix.rust_target }} --bundles ${{ matrix.bundles }}
