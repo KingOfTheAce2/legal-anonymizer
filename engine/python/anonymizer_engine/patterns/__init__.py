@@ -35,10 +35,6 @@ from .base import (
     _compile_patterns,
 )
 
-def validate_credit_card(value: str) -> bool:
-    """Return True if *value* passes the Luhn check (valid credit-card number)."""
-    return luhn_checksum(value)
-
 # Import all pattern lists for direct access
 from .email import EMAIL_PATTERNS
 from .phone import PHONE_PATTERNS
@@ -55,6 +51,11 @@ from .addresses import (
     TAX_ID_PATTERNS,
 )
 from .medical import MEDICAL_ID_PATTERNS
+
+
+def validate_credit_card(value: str) -> bool:
+    """Return True if *value* passes the Luhn check (valid credit-card number)."""
+    return luhn_checksum(value)
 
 # Export all public names
 __all__ = [

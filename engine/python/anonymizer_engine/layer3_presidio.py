@@ -18,7 +18,7 @@ from typing import Dict, List, Tuple, Optional, Any
 from .preset import Preset
 from .findings import Finding
 from .pseudonym import PseudonymMapper
-from .patterns import detect_with_validation, PatternMatch
+from .patterns import detect_with_validation
 from .shared import PRIORITY, get_context, mask_value, log_detection_warning, log_detection_error
 
 # Presidio entity to our taxonomy mapping

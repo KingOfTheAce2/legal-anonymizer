@@ -19,9 +19,9 @@ from typing import Dict, List, Tuple, Any, Optional, Callable
 from .preset import Preset
 from .findings import Finding
 from .pseudonym import PseudonymMapper
-from .patterns import detect_with_validation, PatternMatch
+from .patterns import detect_with_validation
 from .shared import PRIORITY, get_context, mask_value, log_detection_warning, log_detection_error
-from .chunking import DocumentChunker, ChunkProcessor
+from .chunking import DocumentChunker
 
 try:
     from .validators import EntityValidator
