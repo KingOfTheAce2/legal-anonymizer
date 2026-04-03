@@ -108,8 +108,8 @@ jobs:
 
           - os: macos-latest
             triple: aarch64-apple-darwin
-            rust_target: universal-apple-darwin
-            label: macos-universal
+            rust_target: aarch64-apple-darwin
+            label: macos-arm
             bundles: dmg
 
           - os: ubuntu-latest
@@ -140,12 +140,6 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod +x apps/desktop/src-tauri/binaries/anonymizer_engine-${{ matrix.triple }}
 
-      - name: Add Intel sidecar alias for Universal build (runs via Rosetta 2)
-        if: matrix.rust_target == 'universal-apple-darwin'
-        run: |
-          cp apps/desktop/src-tauri/binaries/anonymizer_engine-aarch64-apple-darwin \
-             apps/desktop/src-tauri/binaries/anonymizer_engine-x86_64-apple-darwin
-
       # ── Node / npm ──
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -158,7 +152,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.rust_target == 'universal-apple-darwin' && 'aarch64-apple-darwin,x86_64-apple-darwin' || matrix.rust_target }}
+          targets: ${{ matrix.rust_target }}
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
