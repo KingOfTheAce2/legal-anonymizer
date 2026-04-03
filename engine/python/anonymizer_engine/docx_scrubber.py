@@ -1,7 +1,10 @@
 import os
 from datetime import datetime
 from typing import Dict, List, Tuple
-from docx import Document
+try:
+    from docx import Document
+except ImportError:
+    Document = None  # type: ignore[assignment,misc]
 
 from .preset import Preset
 from .layer1 import analyze_layer1_text
