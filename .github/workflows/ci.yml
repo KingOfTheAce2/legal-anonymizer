@@ -63,11 +63,7 @@ jobs:
     - name: Run tests with pytest
       run: |
         cd engine/python
-        echo "::notice::Python=$(python --version 2>&1) Pytest=$(python -m pytest --version 2>&1)"
-        echo "::notice::CWD=$(pwd) tests_exist=$(ls tests/unit tests/integration 2>&1 | wc -l) files"
-        python -m pytest tests/unit tests/integration --cov=anonymizer_engine --cov-report=xml --cov-report=term -q 2>&1; EXITCODE=$?
-        echo "::notice::pytest exit code: $EXITCODE"
-        exit $EXITCODE
+        python -m pytest tests/unit tests/integration --cov=anonymizer_engine --cov-report=xml --cov-report=term -q
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
