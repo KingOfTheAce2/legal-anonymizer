@@ -120,7 +120,7 @@ class TestLayer1Redaction:
         redacted, findings, summary = analyze_layer1_text(text, preset, "en")
 
         assert "987-65-4321" not in redacted
-        assert "█" in redacted
+        assert "[" in redacted  # redacted as [ENTITY_TYPE]
 
     @pytest.mark.unit
     @pytest.mark.layer1
