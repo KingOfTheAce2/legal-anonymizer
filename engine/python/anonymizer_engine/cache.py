@@ -10,7 +10,7 @@ Provides:
 
 import re
 from functools import wraps, lru_cache
-from typing import Callable, Any, Dict, Tuple, List, Optional
+from typing import Callable, Any, Dict, Optional
 from collections import OrderedDict
 import threading
 

@@ -13,7 +13,6 @@ Performance optimizations:
 - Progress reporting for large documents
 """
 
-import re
 import threading
 from typing import Dict, List, Tuple, Any, Optional, Callable
 

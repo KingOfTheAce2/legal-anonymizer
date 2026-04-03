@@ -1,7 +1,6 @@
 import os
-import json
 from dataclasses import asdict
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional
 
 from .preset import Preset
 from .findings import Finding
@@ -9,7 +8,6 @@ from .report import (
     make_run_folder,
     new_run_id,
     write_json,
-    write_findings_csv,
     build_model_inventory,
     build_run_report,
     sha256_file,

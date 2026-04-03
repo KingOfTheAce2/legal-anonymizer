@@ -2,7 +2,6 @@ import os
 from datetime import datetime
 from typing import Dict, List, Tuple
 from docx import Document
-from docx.oxml.ns import qn
 
 from .preset import Preset
 from .layer1 import analyze_layer1_text
