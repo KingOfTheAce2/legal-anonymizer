@@ -134,6 +134,46 @@ disable_error_code = [
     "no-redef",
 ]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = ["-p", "no:benchmark", "--tb=short", "--strict-markers"]
+markers = [
+    "unit: Unit tests for individual components",
+    "integration: Integration tests for multi-component workflows",
+    "benchmark: Performance/benchmark tests",
+    "slow: Tests that take significant time to run",
+    "compliance: Tests for legal/compliance requirements",
+    "pii_detection: Tests for PII detection accuracy",
+    "false_positive: Tests for false positive prevention",
+    "layer1: Tests for Layer 1 (pattern + spaCy)",
+    "layer2: Tests for Layer 2 (transformer-based)",
+    "layer3: Tests for Layer 3 (Presidio-based)",
+    "spacy: Tests requiring spaCy models",
+    "high_priority: Critical tests for legal compliance",
+    "requires_models: Tests that require NLP models",
+]
+
+[tool.coverage.run]
+branch = true
+omit = ["*/tests/*", "*/test_*.py", "setup.py"]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstract",
+]
+
 [tool.bandit]
 exclude_dirs = ["tests", "venv", ".venv"]
 skips = [
