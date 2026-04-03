@@ -237,7 +237,7 @@ def example_5_benchmark():
         for _ in range(1000):
             try:
                 validator("123456782")
-            except:
+            except Exception:
                 pass
         elapsed = time.time() - start
 
