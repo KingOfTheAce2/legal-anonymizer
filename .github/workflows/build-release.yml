@@ -62,6 +62,8 @@ jobs:
       - name: Install engine + PyInstaller
         run: |
           cd engine/python
+          # Install CPU-only torch first to avoid bundling CUDA libraries (saves ~1.5GB on Linux)
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
           pip install -e ".[layer1,layer2,layer3,pdf,docx,pptx]"
           pip install pyinstaller
 
@@ -236,6 +238,17 @@ jobs:
 
       - name: List release files
         run: ls -lh artifacts/
+
+      - name: Remove assets exceeding GitHub 2GB limit
+        run: |
+          for f in artifacts/*; do
+            size=$(stat -c%s "$f" 2>/dev/null || stat -f%z "$f" 2>/dev/null || echo 0)
+            if [ "$size" -gt 1900000000 ]; then
+              echo "Skipping $(basename $f) ($(du -sh $f | cut -f1)) — exceeds GitHub 2GB release asset limit"
+              rm "$f"
+            fi
+          done
+          echo "Assets to release:" && ls -lh artifacts/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
