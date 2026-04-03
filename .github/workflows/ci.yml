@@ -61,7 +61,12 @@ jobs:
     - name: Run tests with pytest
       run: |
         cd engine/python
-        pytest --cov=anonymizer_engine --cov-report=xml --cov-report=term
+        echo "=== pytest.ini addopts ==="
+        python -c "import configparser; c=configparser.ConfigParser(); c.read('pytest.ini'); print(c['pytest'].get('addopts','(none)'))"
+        echo "=== Collecting tests ==="
+        pytest --collect-only -q --ignore=tests/benchmarks 2>&1 | tail -5
+        echo "=== Running tests ==="
+        pytest tests/unit tests/integration --cov=anonymizer_engine --cov-report=xml --cov-report=term -v --tb=short 2>&1
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
