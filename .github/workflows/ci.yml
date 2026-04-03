@@ -63,7 +63,7 @@ jobs:
     - name: Run tests with pytest
       run: |
         cd engine/python
-        pytest tests/unit tests/integration --cov=anonymizer_engine --cov-report=xml --cov-report=term -q
+        python -m pytest tests/unit tests/integration --cov=anonymizer_engine --cov-report=xml --cov-report=term -q
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
@@ -97,7 +97,7 @@ jobs:
     - name: Run performance benchmarks
       run: |
         cd engine/python
-        pytest tests/benchmarks/ --benchmark-only --benchmark-json=benchmark.json
+        python -m pytest tests/benchmarks/ --benchmark-only --benchmark-json=benchmark.json
 
     - name: Store benchmark results
       uses: benchmark-action/github-action-benchmark@v1
