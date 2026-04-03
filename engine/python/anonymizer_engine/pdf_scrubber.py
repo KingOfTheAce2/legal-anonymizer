@@ -116,14 +116,8 @@ def scrub_pdf(
 
             # For pseudonymise/mask, we need to add replacement text
             # This is done after applying redactions
-            for finding in findings:
-                if finding.redaction_action == "pseudonymise" and finding.pseudonym_value:
-                    original_text = finding.detected_text
-                    replacement = finding.pseudonym_value
-
-                    # This is a simplified approach - in production you'd want
-                    # more sophisticated text positioning
-                    # For now, redaction boxes are left black
+            # pseudonymise/mask replacements not yet supported in PDF
+            # (redaction boxes are left black; future enhancement)
 
         # Save the redacted PDF
         doc.save(output_path, garbage=4, deflate=True)

@@ -218,14 +218,14 @@ def main():
     server_address = (args.host, args.port)
     httpd = HTTPServer(server_address, CORSRequestHandler)
 
-    print(f"=" * 60)
-    print(f"  Legal Anonymizer Web Server")
+    print("=" * 60)
+    print("  Legal Anonymizer Web Server")
     print(f"  Running at: http://{args.host}:{args.port}")
     print(f"  API endpoint: http://{args.host}:{args.port}/api/analyze")
     print(f"  Health check: http://{args.host}:{args.port}/health")
     print(f"  Frontend:     {static_status} ({STATIC_DIR})")
-    print(f"=" * 60)
-    print(f"\nPress Ctrl+C to stop.\n")
+    print("=" * 60)
+    print("\nPress Ctrl+C to stop.\n")
 
     try:
         httpd.serve_forever()

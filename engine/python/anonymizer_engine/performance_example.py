@@ -17,8 +17,7 @@ from .patterns import (
     validate_dutch_bsn,
     detect_patterns,
 )
-from .chunking import DocumentChunker, ChunkProcessor
-from .layer1 import analyze_layer1_text
+from .chunking import DocumentChunker
 
 
 def example_1_validation_caching():
@@ -217,14 +216,6 @@ def example_5_benchmark():
     clear_all_caches()
 
     # Test data
-    test_cases = [
-        ("Small SSN", "123-45-6789"),
-        ("Small Email", "test@example.com"),
-        ("Small Phone", "+1-555-0123"),
-        ("Small IBAN", "DE89370400440532013000"),
-        ("Small Card", "4532015112830366"),
-    ]
-
     print("Validation Performance Benchmark (1000 iterations):")
     print("-" * 60)
 
@@ -238,7 +229,7 @@ def example_5_benchmark():
         # Warm up
         try:
             validator("123456782")
-        except:
+        except Exception:
             pass
 
         # Benchmark

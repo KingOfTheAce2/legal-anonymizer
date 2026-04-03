@@ -11,7 +11,6 @@ The resulting executable can be distributed without Python installed.
 
 import subprocess
 import sys
-import os
 from pathlib import Path
 
 # Models to include per layer
@@ -185,14 +184,14 @@ def build_executable(name: str = "anonymizer_engine", layers: list[str] = None):
         for model in SPACY_MODELS.get("layer1", []):
             try:
                 cmd.extend(["--collect-data", model])
-            except:
+            except Exception:
                 pass
 
     if "layer3" in layers:
         for model in SPACY_MODELS.get("layer3", []):
             try:
                 cmd.extend(["--collect-data", model])
-            except:
+            except Exception:
                 pass
 
     # Hidden imports for sidecar dependencies
@@ -210,22 +209,22 @@ def build_executable(name: str = "anonymizer_engine", layers: list[str] = None):
 
     cmd.append(str(script_path))
 
-    print(f"\nRunning PyInstaller...")
+    print("\nRunning PyInstaller...")
     print(f"Command: {' '.join(cmd[:10])}...")
     subprocess.run(cmd, check=True)
 
     # Print summary
     print(f"\n{'='*60}")
-    print(f"BUILD COMPLETE!")
+    print("BUILD COMPLETE!")
     print(f"{'='*60}")
     print(f"\nExecutable: dist/{name}")
     print(f"Layers included: {', '.join(layers)}")
-    print(f"\nIncluded components:")
+    print("\nIncluded components:")
     print(f"  - Layer 1 (spaCy): {'Yes' if 'layer1' in layers else 'No'}")
     print(f"  - Layer 2 (HuggingFace): {'Yes' if 'layer2' in layers else 'No'}")
     print(f"  - Layer 3 (MS Presidio): {'Yes' if 'layer3' in layers else 'No'}")
-    print(f"\nThis executable can be distributed without Python installed.")
-    print(f"All models are bundled for 100% offline operation.")
+    print("\nThis executable can be distributed without Python installed.")
+    print("All models are bundled for 100% offline operation.")
 
 if __name__ == "__main__":
     import argparse
