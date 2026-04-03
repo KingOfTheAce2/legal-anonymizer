@@ -22,7 +22,7 @@ from .patterns import detect_with_validation
 from .shared import PRIORITY, get_context, mask_value, log_detection_warning, log_detection_error
 
 # Presidio entity to our taxonomy mapping
-PRESIDIO_ENTITY_MAP: Dict[str, str] = {
+PRESIDIO_ENTITY_MAP: Dict[str, Optional[str]] = {
     "PERSON": "PERSON",
     "EMAIL_ADDRESS": "EMAIL",
     "PHONE_NUMBER": "PHONE_NUMBER",
