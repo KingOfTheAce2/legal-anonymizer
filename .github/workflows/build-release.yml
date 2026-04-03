@@ -107,21 +107,25 @@ jobs:
             triple: x86_64-pc-windows-msvc
             rust_target: x86_64-pc-windows-msvc
             label: windows
+            bundles: nsis
 
           - os: macos-13
             triple: x86_64-apple-darwin
             rust_target: x86_64-apple-darwin
             label: macos-intel
+            bundles: dmg
 
           - os: macos-latest
             triple: aarch64-apple-darwin
             rust_target: aarch64-apple-darwin
             label: macos-arm
+            bundles: dmg
 
           - os: ubuntu-latest
             triple: x86_64-unknown-linux-gnu
             rust_target: x86_64-unknown-linux-gnu
             label: linux
+            bundles: deb,appimage
 
     steps:
       - uses: actions/checkout@v4
@@ -185,7 +189,7 @@ jobs:
       - name: Build Tauri app
         run: |
           cd apps/desktop
-          npm run tauri build -- --target ${{ matrix.rust_target }}
+          npm run tauri build -- --target ${{ matrix.rust_target }} --bundles ${{ matrix.bundles }}
 
       # ── Collect installer files ──
       - name: Collect installer artifacts
