@@ -202,7 +202,7 @@ class CORSRequestHandler(BaseHTTPRequestHandler):
         except Exception as e:
             self._send_error_response(f"Processing error: {str(e)}", 500)
 
-    def log_message(self, format: str, *args):
+    def log_message(self, _format: str, *args):
         """Custom log format."""
         print(f"[WebServer] {args[0]} {args[1]} {args[2]}")
 

@@ -600,13 +600,7 @@ export function ModelManager({ isDesktop, uiLang = "en", onStatusChange, onSetup
       ));
       onStatusChange?.(`${t(uiLang, "mm_install_failed")} ${msg}`);
     }
-  }, [isDesktop, uiLang, onStatusChange, onSetupComplete, refreshDiskUsage]);
-
-  const handleInstallAllPresidio = useCallback(async () => {
-    for (const component of presidioComponents.filter(c => c.status === "not_installed")) {
-      await handleDownloadPresidio(component.id);
-    }
-  }, [presidioComponents, handleDownloadPresidio]);
+  }, [isDesktop, uiLang, onStatusChange, onSetupComplete, refreshDiskUsage, presidioComponents]);
 
   // Uninstall handlers
 

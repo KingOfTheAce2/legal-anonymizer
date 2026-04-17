@@ -134,7 +134,7 @@ def _get_analyzer(language: str = "en"):
         # an immediate OSError, not a blocked process.
         import spacy.cli as _spacy_cli  # noqa: PLC0415
         _orig_download = getattr(_spacy_cli, "download", None)
-        def _no_download(*a, **kw):
+        def _no_download(*_a, **_kw):
             raise OSError("spaCy model download disabled in frozen/bundled build")
         try:
             if _orig_download is not None:

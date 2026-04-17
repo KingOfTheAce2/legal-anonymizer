@@ -1,9 +1,11 @@
-# Pre-commit hooks for legal-anonymizer
+# Pre-commit hooks for Redactly Legal
 # Install: pip install pre-commit && pre-commit install
+# Run all: pre-commit run --all-files
+# Run Rust checks (slow): pre-commit run --hook-stage manual
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -15,23 +17,70 @@ repos:
       - id: check-merge-conflict
       - id: detect-private-key
 
+  # Python: lint + format (engine/python only)
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.9
+    rev: v0.4.5
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
+        files: ^engine/python/
       - id: ruff-format
+        files: ^engine/python/
 
+  # Python: type checking
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.7.1
+    rev: v1.8.0
     hooks:
       - id: mypy
-        additional_dependencies: [types-all]
-        args: [--ignore-missing-imports]
+        args: [--ignore-missing-imports, --no-error-summary]
+        files: ^engine/python/
+        pass_filenames: false
+        entry: bash -c 'cd engine/python && python -m mypy anonymizer_engine scripts'
 
+  # Python: security scanning
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.5
+    rev: 1.9.4
     hooks:
       - id: bandit
-        args: [-c, pyproject.toml]
+        args: [-c, engine/python/pyproject.toml, -q]
+        files: ^engine/python/
         additional_dependencies: ["bandit[toml]"]
+
+  # Python: dead code detection
+  - repo: local
+    hooks:
+      - id: vulture
+        name: Vulture (Python dead code)
+        language: python
+        entry: vulture
+        args:
+          - engine/python/anonymizer_engine
+          - engine/python/scripts
+          - --min-confidence
+          - '80'
+        pass_filenames: false
+        files: ^engine/python/
+        additional_dependencies: [vulture]
+
+  # TypeScript/React: lint
+  - repo: local
+    hooks:
+      - id: eslint-frontend
+        name: ESLint (TypeScript/React)
+        language: system
+        entry: bash
+        args: ['-c', 'cd apps/desktop && npm run lint -- --max-warnings=0']
+        pass_filenames: false
+        files: ^apps/desktop/src/.*\.(ts|tsx)$
+
+  # Rust: clippy (run manually — slow full compile)
+  - repo: local
+    hooks:
+      - id: cargo-clippy
+        name: Cargo Clippy (Rust)
+        language: system
+        entry: bash
+        args: ['-c', 'cd apps/desktop/src-tauri && cargo clippy -- -D warnings']
+        pass_filenames: false
+        files: \.rs$
+        stages: [manual]

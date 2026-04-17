@@ -3,7 +3,7 @@ import os
 import sys
 
 from anonymizer_engine.model_manager import ModelManager, ModelRef
-from anonymizer_engine.layer2_candle import CandleModelConfig, analyze_layer2_text
+from anonymizer_engine.layer2_candle import analyze_layer2_text
 from anonymizer_engine.report import (
     make_run_folder,
     new_run_id,

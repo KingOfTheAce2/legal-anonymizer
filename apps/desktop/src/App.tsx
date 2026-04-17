@@ -4,7 +4,6 @@ import {
   analyzeText,
   analyzeFile,
   selectFile,
-  openInBrowser,
   Preset,
   ALL_PRESETS,
   PRESET_LAYER1_FAST,
@@ -462,7 +461,7 @@ export function App() {
     } finally {
       setIsProcessing(false);
     }
-  }, [mode, text, selectedFile, getCurrentPreset]);
+  }, [mode, text, selectedFile, getCurrentPreset, uiLang]);
 
   const handleSelectFile = useCallback(async () => {
     if (!isDesktop) return;
@@ -473,26 +472,26 @@ export function App() {
       const msg = e instanceof Error ? e.message : String(e);
       setStatusMessage(`${t(uiLang, "err_select_file")} ${msg}`);
     }
-  }, [isDesktop]);
+  }, [isDesktop, uiLang]);
 
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(result);
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
-    } catch (e) {
+    } catch {
       setStatusMessage(t(uiLang, "err_copy"));
     }
-  }, [result]);
+  }, [result, uiLang]);
 
   const handlePaste = useCallback(async () => {
     try {
       const clipText = await navigator.clipboard.readText();
       setText(clipText);
-    } catch (e) {
+    } catch {
       setStatusMessage(t(uiLang, "err_paste"));
     }
-  }, []);
+  }, [uiLang]);
 
   // Export as plain text
   const handleExportTxt = useCallback(() => {
@@ -585,7 +584,7 @@ export function App() {
     setSelectedFile(filePath);
     setMode("file");
     setStatusMessage(`${t(uiLang, "status_file_selected")} ${file.name}`);
-  }, []);
+  }, [uiLang]);
 
   // Check if current quality mode has models ready
   const isQualityAvailable = (q: QualityMode): boolean => {
